@@ -1482,7 +1482,7 @@ function buildWorld(){
   if(G.scene) disposeScene(G.scene);
   const S=G.scene=new THREE.Scene();
   S.background=new THREE.Color(0x86cfa0); S.fog=new THREE.Fog(0x86cfa0,48,95);
-  G.camera=new THREE.PerspectiveCamera(46,innerWidth/innerHeight,0.1,200);
+  G.camera=new THREE.PerspectiveCamera(46,VW()/VH(),0.1,200);
   S.add(new THREE.HemisphereLight(0xffffff,0x8a9a7a,0.46));
   const dl=new THREE.DirectionalLight(0xfff4e0,0.62); dl.position.set(14,32,12); dl.castShadow=save.shadows;
   dl.shadow.mapSize.set(2048,2048); const sc=dl.shadow.camera; sc.left=-34; sc.right=34; sc.top=36; sc.bottom=-36; sc.near=1; sc.far=90; dl.shadow.bias=-0.0008;
@@ -2161,6 +2161,33 @@ function updateMinions(dt){
 }
 
 /* =========================================================
+   横画面固定（スマホ）
+========================================================= */
+let ROT=false;
+const VW=()=>ROT?innerHeight:innerWidth, VH=()=>ROT?innerWidth:innerHeight;
+const toLocal=(dx,dy)=>ROT?[dy,-dx]:[dx,dy];
+function applyOrientation(){
+  const gs=$('game-screen'); const inGame=gs.classList.contains('active');
+  ROT = IS_TOUCH && inGame && innerHeight>innerWidth;
+  if(ROT){ gs.style.cssText=`inset:auto;top:0;left:0;width:${innerHeight}px;height:${innerWidth}px;transform-origin:0 0;transform:translateX(${innerWidth}px) rotate(90deg)`; }
+  else gs.style.cssText='';
+}
+function tryLandscapeLock(){
+  if(!IS_TOUCH) return;
+  try{
+    const el=document.documentElement;
+    const go=()=>{ try{ const p=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape'); if(p&&p.catch) p.catch(()=>{}); }catch(e){} };
+    if(!document.fullscreenElement&&el.requestFullscreen){ const p=el.requestFullscreen({navigationUI:'hide'}); if(p&&p.then) p.then(()=>{ go(); setTimeout(onResize,300); }).catch(()=>{}); }
+    else go();
+  }catch(e){}
+}
+function unlockOrientation(){
+  try{ if(screen.orientation&&screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+  try{ if(document.fullscreenElement&&document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }catch(e){}
+  ROT=false; $('game-screen').style.cssText='';
+}
+
+/* =========================================================
    入力・カーソル固定
 ========================================================= */
 const PL={locked:false,vx:0,vy:0,want:false};
@@ -2205,7 +2232,7 @@ function autoTarget(range){
 }
 const TA={atk:null,ult:null,atkDrag:false};
 function bindAimButton(btn,kind){
-  const upd=t=>{ const a=TA[kind]; a.dx=t.clientX-a.x0; a.dy=t.clientY-a.y0; const L=Math.hypot(a.dx,a.dy); const p=G.player; if(!p) return;
+  const upd=t=>{ const a=TA[kind]; [a.dx,a.dy]=toLocal(t.clientX-a.x0,t.clientY-a.y0); const L=Math.hypot(a.dx,a.dy); const p=G.player; if(!p) return;
     if(L>18){ a.dir=new V3(a.dx/L,0,a.dy/L); const max=kind==='atk'?p.hero.range:(p.hero.id==='tesla'?13:10); a.dist=kind==='atk'?max:Math.max(1.5,max*Math.min(1,L/110));
       if(kind==='atk') TA.atkDrag=true; else INPUT.ultAim=true; btn.classList.add('drag'); }
     else { a.dir=null; if(kind==='atk') TA.atkDrag=false; else INPUT.ultAim=false; btn.classList.remove('drag'); } };
@@ -2250,7 +2277,7 @@ function bindInput(){
   });
   addEventListener('mouseup',e=>{ if(e.button===0) INPUT.firing=false; if(e.button===2&&INPUT.ultAim){ INPUT.ultAim=false; firePlayerUlt(); } });
   const joy=$('joy'), knob=$('joy-k');
-  const jUpd=t=>{ const r=joy.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2; let dx=t.clientX-cx, dy=t.clientY-cy; const m=r.width/2; const l=Math.hypot(dx,dy); if(l>m){ dx=dx/l*m; dy=dy/l*m; }
+  const jUpd=t=>{ const r=joy.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2; let [dx,dy]=toLocal(t.clientX-cx,t.clientY-cy); const m=r.width/2; const l=Math.hypot(dx,dy); if(l>m){ dx=dx/l*m; dy=dy/l*m; }
     knob.style.transform=`translate(${dx}px,${dy}px)`; INPUT.joy.x=dx/m; INPUT.joy.y=dy/m; };
   joy.addEventListener('touchstart',e=>{ e.preventDefault(); SFX.init(); const t=e.changedTouches[0]; INPUT.joy.active=true; INPUT.joy.id=t.identifier; jUpd(t); },{passive:false});
   joy.addEventListener('touchmove',e=>{ e.preventDefault(); for(const t of e.changedTouches) if(t.identifier===INPUT.joy.id) jUpd(t); },{passive:false});
@@ -2300,7 +2327,8 @@ function ensureRenderer(){
 function startBattle(){ startMatch(buildSetup(save.mode,[{name:save.name,hero:save.hero,lvl:save.levels[save.hero]}]),0); }
 function startMatch(setup,myHuman){
   ensureRenderer();
-  G.renderer.setSize(innerWidth,innerHeight);
+  applyOrientation(); tryLandscapeLock();
+  G.renderer.setSize(VW(),VH());
   document.querySelectorAll('.modal').forEach(m=>m.classList.remove('on'));
   $('lobby').classList.remove('active'); $('game-screen').classList.add('active');
   G.isClient=NET.mode==='client'; G.mode=setup.mode; NET.inMatch=NET.mode!=='off'; NET.ev=[]; NET.sendT=0; NET.inT=0;
@@ -2381,7 +2409,7 @@ function showResult(){
   $('result').classList.add('on');
 }
 function exitMatchToLobby(){
-  releaseLock();
+  releaseLock(); unlockOrientation();
   $('result').classList.remove('on'); $('pause-ov').classList.remove('on'); $('vs').classList.remove('on');
   $('game-screen').classList.remove('active','playing'); $('lobby').classList.add('active');
   G.state='lobby'; G.paused=false; G.menuOpen=false; G.isClient=false; NET.inMatch=false;
@@ -2395,9 +2423,11 @@ function backToLobby(){
   if(NET.mode!=='off') openRoom();
 }
 function onResize(){
-  if(G.renderer&&G.camera){ G.renderer.setSize(innerWidth,innerHeight); G.camera.aspect=innerWidth/innerHeight; G.camera.fov=G.camera.aspect<1?68:(G.camera.aspect<1.4?54:46); G.camera.updateProjectionMatrix(); }
+  applyOrientation();
+  if(G.renderer&&G.camera){ G.renderer.setSize(VW(),VH()); G.camera.aspect=VW()/VH(); G.camera.fov=G.camera.aspect<1?68:(G.camera.aspect<1.4?54:46); G.camera.updateProjectionMatrix(); }
 }
 addEventListener('resize',onResize);
+addEventListener('orientationchange',()=>setTimeout(onResize,200));
 
 /* =========================================================
    オンライン — 試合中の同期
@@ -2453,7 +2483,7 @@ function applyEvent(e){
    メイン更新
 ========================================================= */
 const _v=new V3();
-function project(pos,yOff){ _v.set(pos.x,pos.y+yOff,pos.z).project(G.camera); return {x:(_v.x*0.5+0.5)*innerWidth, y:(-_v.y*0.5+0.5)*innerHeight, vis:_v.z<1}; }
+function project(pos,yOff){ _v.set(pos.x,pos.y+yOff,pos.z).project(G.camera); return {x:(_v.x*0.5+0.5)*VW(), y:(-_v.y*0.5+0.5)*VH(), vis:_v.z<1}; }
 function fmtTime(s){ s=Math.max(0,Math.ceil(s)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
 function viewTarget(){
   const p=G.player; if(p&&!p.dead) return p;
