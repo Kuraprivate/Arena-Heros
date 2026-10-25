@@ -146,6 +146,15 @@ button{font-family:inherit;cursor:pointer}
 .box-art i{font-size:72px;color:#fff;filter:drop-shadow(0 6px 0 rgba(0,0,0,.18));animation:bob 2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-8px) rotate(-3deg)}}
 .box-card h3{font-size:17px;font-weight:900;margin-top:10px}
+.rates{display:grid;gap:4px;margin:0 0 12px;text-align:left}
+.rate-row{display:flex;align-items:center;gap:8px;background:#f7f9fd;border-radius:10px;padding:5px 10px;font-size:12px;font-weight:900}
+.rate-row b{margin-left:auto;font-family:Orbitron;font-size:12px}
+.rate-row small{font-weight:700;color:var(--sub);font-size:10px}
+.rate-note{font-size:11px;color:var(--sub);font-weight:700;margin-top:12px;line-height:1.7}
+.rar{display:inline-block;font-size:10px;font-weight:900;color:#fff;padding:2px 9px;border-radius:999px;margin:4px 0 0 4px}
+.rar.R{background:linear-gradient(90deg,#06b6d4,#0284c7)}.rar.SR{background:linear-gradient(90deg,#a855f7,#6d28d9)}.rar.LR{background:linear-gradient(90deg,#fbbf24,#ea580c);box-shadow:0 0 8px rgba(251,191,36,.7)}
+.box-hero{width:150px;height:150px;border-radius:24px;margin:6px auto;display:block;animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+.box-hero.R{box-shadow:0 0 0 4px #06b6d4,0 0 26px #22d3ee}.box-hero.SR{box-shadow:0 0 0 4px #8b5cf6,0 0 34px #a855f7}.box-hero.LR{box-shadow:0 0 0 4px #f59e0b,0 0 44px #fbbf24}
 .box-card p{font-size:12px;color:var(--sub);font-weight:700;margin:4px 0 10px}
 
 /* records / settings */
@@ -401,19 +410,22 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
 
       <!-- SHOP -->
       <section class="tab" id="tab-shop">
-        <div class="sec-h"><div class="ic" style="background:linear-gradient(180deg,#c084fc,#7c3aed)"><i class="fa-solid fa-box-open"></i></div><div><h2>ボックス</h2><p>ボックスを開けてコインやジェムをゲット！</p></div></div>
+        <div class="sec-h"><div class="ic" style="background:linear-gradient(180deg,#c084fc,#7c3aed)"><i class="fa-solid fa-box-open"></i></div><div><h2>ボックス</h2><p>ジェムでボックスを開けて新しいキャラをゲット！ キャラが出なかったときはコインがもらえるよ</p></div></div>
         <div class="shop-grid">
           <div class="card box-card">
             <div class="box-art" style="background:linear-gradient(160deg,#fde68a,#f59e0b)"><i class="fa-solid fa-box"></i></div>
-            <h3>ヒーローボックス</h3><p>コイン 60〜250 ／ たまにジェム！</p>
-            <button class="btn or" style="width:100%" data-box="small"><i class="fa-solid fa-coins"></i> 100</button>
+            <h3>ヒーローボックス</h3><p>キャラが出る確率 <b>10%</b> ／ ハズレはコイン 60〜250</p>
+            <div class="rates" id="rates-small"></div>
+            <button class="btn pu" style="width:100%" data-box="small"><i class="fa-solid fa-gem"></i> 5</button>
           </div>
           <div class="card box-card">
             <div class="box-art" style="background:linear-gradient(160deg,#f0abfc,#7c3aed)"><i class="fa-solid fa-box-open"></i></div>
-            <h3>メガボックス</h3><p>コイン 300〜800 ＋ ジェム</p>
-            <button class="btn pu" style="width:100%" data-box="mega"><i class="fa-solid fa-gem"></i> 25</button>
+            <h3>メガボックス</h3><p>キャラが出る確率 <b>50%</b> ／ ハズレはコイン 300〜800</p>
+            <div class="rates" id="rates-mega"></div>
+            <button class="btn pu" style="width:100%" data-box="mega"><i class="fa-solid fa-gem"></i> 20</button>
           </div>
         </div>
+        <p class="rate-note">※ もう持っているキャラが出たときは、レア度に応じたコインに変わります（レア 300／スーパーレア 800／レジェンドレア 2000）。<br>※ レジェンドレアのキャラはまだいません。いない間は、その確率の分はスーパーレアになります。</p>
       </section>
 
       <!-- RECORD -->
@@ -501,7 +513,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <h3><i class="fa-solid fa-circle-question" style="color:#7c3aed"></i> あそびかた</h3>
   <div class="help">
     <h4>ルール：サバイバル</h4>
-    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>木箱をこわすと<b>パワーキューブ</b>が出てくる。拾うと体力と攻撃力がアップ！</li><li>攻撃は壁や木箱を通りぬけないよ。かくれて身を守ろう。</li></ul>
+    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>木箱をこわすと<b>パワーキューブ</b>が出てくる。拾うと体力と攻撃力がアップ！</li><li>攻撃は壁や木箱を通りぬけないよ。かくれて身を守ろう。</li></ul>
     <h4>オンライン（みんなで遊ぶ）</h4>
     <ul><li>「部屋をつくる」と5けたの<b>部屋コード</b>が出るよ。友だちに教えてあげよう。</li><li>友だちは「部屋に入る」でコードを入れると参加できる（最大3人）。</li><li>部屋をつくった人がモード（ソロ／トリオ）を選んでスタート！</li></ul>
     <h4>パソコン</h4>
@@ -672,19 +684,19 @@ const HEROES = {
     ultName:'マザーマッシュルーム',ultDesc:'花の魔法陣から巨大キノコを召喚。味方を回復しながら、敵を追う子キノコを生み出す！'},
   // ---- ここから新キャラ（Fantasy Defense のキャラが元ネタ） ----
   samurai:{id:'samurai',name:'ハヤテ',title:'蒼き疾風の侍',role:'アサシン',color:0x38bdf8,hex:'#0ea5e9',grad:'linear-gradient(160deg,#e0f2fe,#7dd3fc)',
-    hp:3400,speed:7.9,range:4.2,reload:1.0,dmg:860,charge:28,aimW:0.3,melee:true,ultKind:'dash',ultR:1.6,ultMax:11,price:{coins:600},
+    hp:3400,speed:7.9,range:4.2,reload:1.0,dmg:860,charge:28,aimW:0.3,melee:true,ultKind:'dash',ultR:1.6,ultMax:11,rarity:'R',box:true,
     atkName:'居合斬り',atkDesc:'目の前を刀で大きく切りはらう近接攻撃。弾の回復がとても早い！',
     ultName:'疾風・一閃',ultDesc:'ねらった方向へ一瞬で駆けぬけ、通り道の敵をまとめて切る。駆けている間は無敵！'},
   brave:{id:'brave',name:'アレス',title:'黄金の勇者',role:'ファイター',color:0xf59e0b,hex:'#f59e0b',grad:'linear-gradient(160deg,#fef3c7,#fcd34d)',
-    hp:4300,speed:7.0,range:9.5,reload:1.5,dmg:1050,charge:34,aimW:1.3,ultKind:'point',ultR:3.6,ultMax:9,price:{coins:900},
+    hp:4300,speed:7.0,range:9.5,reload:1.5,dmg:1050,charge:34,aimW:1.3,ultKind:'point',ultR:3.6,ultMax:9,rarity:'SR',box:true,
     atkName:'聖剣の光刃',atkDesc:'聖剣から金色の光の刃を飛ばす。射程は短めだけど威力が高い！',
     ultName:'ブレイブジャンプ',ultDesc:'ねらった場所へ大ジャンプして聖なる光で大爆発。着地すると3秒間、受けるダメージが半分になる！'},
   golem:{id:'golem',name:'ガンロック',title:'岩石の守護者',role:'タンク',color:0x94a3b8,hex:'#78716c',grad:'linear-gradient(160deg,#f5f5f4,#a8a29e)',
-    hp:5800,speed:6.3,range:10,reload:1.9,dmg:1200,charge:36,aimW:1.3,ultKind:'self',ultR:5,price:{coins:1200},
+    hp:5800,speed:6.3,range:10,reload:1.9,dmg:1200,charge:36,aimW:1.3,ultKind:'self',ultR:5,rarity:'R',box:true,
     atkName:'ロックスロー',atkDesc:'大きな岩を投げる。当たった敵を大きくはじき飛ばす！',
     ultName:'大地の怒り',ultDesc:'地面をたたいて岩のトゲを突き出す。まわりの敵をふっとばして動きをにぶくし、自分も2秒間かたくなる！'},
   necro:{id:'necro',name:'ネクロ',title:'死霊使い',role:'コントローラー',color:0x4ade80,hex:'#16a34a',grad:'linear-gradient(160deg,#dcfce7,#4ade80)',
-    hp:3000,speed:7.2,range:13.5,reload:1.4,dmg:720,charge:30,aimW:0.7,ultKind:'point',ultR:3.5,ultMax:11,price:{gems:40},
+    hp:3000,speed:7.2,range:13.5,reload:1.4,dmg:720,charge:30,aimW:0.7,ultKind:'point',ultR:3.5,ultMax:11,rarity:'SR',box:true,
     atkName:'ソウルスカル',atkDesc:'敵を少しだけ追いかける、緑の炎のドクロを飛ばす！',
     ultName:'死霊の行進',ultDesc:'墓の魔法陣を開いて敵をしばりつけ、敵を追いかけて爆発するゴーストを4体よび出す！'}
 };
@@ -693,7 +705,35 @@ const MAX_LV = 7;
 const lvMult = lv => 1 + 0.1*(lv-1);
 const upCost = lv => 100*lv;
 const isOwned = id => !!save.owned[id];
-const priceTxt = pr => pr.gems?`<i class="fa-solid fa-gem"></i> ${pr.gems}`:`<i class="fa-solid fa-coins"></i> ${pr.coins}`;
+/* ---------- レア度とボックス ---------- */
+const RARITY={R:{name:'レア',coin:300},SR:{name:'スーパーレア',coin:800},LR:{name:'レジェンドレア',coin:2000}};
+const RAR_ORDER=['R','SR','LR'];
+const heroRar = id => HEROES[id].rarity||'R';
+// ボックスの中身：price=ジェム, hero=キャラが出る確率, rar=キャラが出たときのレア度の割合(%)
+const BOXES={
+  small:{name:'ヒーローボックス',icon:'📦',price:5, hero:0.10,rar:{R:80,SR:18,LR:2}, coin:[60,250]},
+  mega: {name:'メガボックス',   icon:'🎁',price:20,hero:0.50,rar:{R:55,SR:37,LR:8}, coin:[300,800]}
+};
+const boxPool = r => HERO_IDS.filter(id=>HEROES[id].box&&heroRar(id)===r);
+// いないレア度が選ばれたら、ひとつ下のレア度にする
+function rollRarity(w){
+  let x=Math.random()*RAR_ORDER.reduce((s,r)=>s+w[r],0), r='R';
+  for(const k of RAR_ORDER){ if(x<w[k]){ r=k; break; } x-=w[k]; }
+  let i=RAR_ORDER.indexOf(r); while(i>0&&!boxPool(RAR_ORDER[i]).length) i--; return RAR_ORDER[i];
+}
+// 実際の確率（レジェンドがいない分を下にまとめたもの）
+function boxRates(kind){
+  const B=BOXES[kind], out={}, tot=RAR_ORDER.reduce((s,r)=>s+B.rar[r],0);
+  RAR_ORDER.forEach(r=>{ let i=RAR_ORDER.indexOf(r); while(i>0&&!boxPool(RAR_ORDER[i]).length) i--; const t=RAR_ORDER[i]; out[t]=(out[t]||0)+B.hero*B.rar[r]/tot; });
+  return out;
+}
+const pct = v => (Math.round(v*1000)/10)+'%';
+function renderRates(){
+  Object.keys(BOXES).forEach(k=>{ const el=$('rates-'+k); if(!el) return; const R=boxRates(k);
+    el.innerHTML=RAR_ORDER.filter(r=>boxPool(r).length).map(r=>{ const pool=boxPool(r);
+      return `<div class="rate-row"><span class="rar ${r}" style="margin:0">${RARITY[r].name}</span><small>${pool.map(id=>HEROES[id].name).join('・')}</small><b>${pct(R[r]||0)}</b></div>`; }).join('')
+      +`<div class="rate-row"><span>🪙 コイン</span><b>${pct(1-BOXES[k].hero)}</b></div>`; });
+}
 const heroPower = id => Math.round((HEROES[id].hp + HEROES[id].dmg*3)*lvMult(save.levels[id])/10);
 
 /* =========================================================
@@ -1179,7 +1219,7 @@ function renderLobby(){
   const mw=Math.min(3,save.mission.wins); $('mis-txt').textContent=mw+'/3'; $('mis-pg').style.width=(mw/3*100)+'%';
   const mb=$('mis-btn'); mb.disabled=!(mw>=3&&!save.mission.claimed); mb.textContent=save.mission.claimed?'達成！':'うけとる';
   $('mini-rec').textContent=`1位 ${save.stats.wins}回・トップ3 ${save.stats.top3}回　最高🏆${save.best}`;
-  renderHeroes(); renderRecords();
+  renderHeroes(); renderRecords(); renderRates();
   $('set-name').value=save.name; $('set-sound').classList.toggle('on',save.sound); $('set-shadow').classList.toggle('on',save.shadows); $('set-sens').value=save.sens;
   if(NET.mode!=='off') renderRoom();
 }
@@ -1189,26 +1229,19 @@ function renderHeroes(){
     const h=HEROES[id], lv=save.levels[id], m=lvMult(lv), sel=save.hero===id, own=isOwned(id);
     const c=document.createElement('div'); c.className='card hcard'+(sel?' sel':'')+(own?'':' locked');
     const bar=(v,max,col)=>`<div class="bar"><i style="width:${Math.min(100,v/max*100)}%;background:${col}"></i></div>`;
-    c.innerHTML=`<div class="top"><div class="th" style="background:${h.grad}"><img src="${THUMBS[id]||''}">${own?`<span class="lvb">Lv.${lv}</span>`:'<span class="lock"><i class="fa-solid fa-lock"></i></span>'}${h.price?'<span class="newb">NEW</span>':''}</div>
-      <div style="flex:1;min-width:0"><h3>${h.name}</h3><div class="tt">${h.title}</div><span class="chip" style="background:${ROLE_COL[id]}">${h.role}</span>
+    c.innerHTML=`<div class="top"><div class="th" style="background:${h.grad}"><img src="${THUMBS[id]||''}">${own?`<span class="lvb">Lv.${lv}</span>`:'<span class="lock"><i class="fa-solid fa-lock"></i></span>'}${h.box&&!own?'<span class="newb">NEW</span>':''}</div>
+      <div style="flex:1;min-width:0"><h3>${h.name}</h3><div class="tt">${h.title}</div><span class="chip" style="background:${ROLE_COL[id]}">${h.role}</span><span class="rar ${heroRar(id)}">${RARITY[heroRar(id)].name}</span>
       <div class="stat"><span>体力</span>${bar(h.hp*m,6000,'#22c55e')}<b>${Math.round(h.hp*m)}</b></div>
       <div class="stat"><span>攻撃力</span>${bar(h.dmg*m*(id==='lumina'?3:1),3200,'#f97316')}<b>${Math.round(h.dmg*m)}${id==='lumina'?'×3':''}</b></div>
       <div class="stat"><span>射程</span>${bar(h.range,16,'#3b82f6')}<b>${h.range}</b></div></div></div>
       <div class="sks"><div><b><i class="fa-solid fa-crosshairs" style="color:#f97316"></i> ${h.atkName}</b>${h.atkDesc}</div><div><b><i class="fa-solid fa-star" style="color:#eab308"></i> ${h.ultName}</b>${h.ultDesc}</div></div>
       <div class="acts">${own?`<button class="btn ${sel?'gr':'or'}" data-sel="${id}" ${sel?'disabled':''}>${sel?'<i class="fa-solid fa-check"></i> 使用中':'このキャラを使う'}</button>
       <button class="btn pu" data-up="${id}" ${lv>=MAX_LV?'disabled':''}>${lv>=MAX_LV?'MAX':'<i class="fa-solid fa-arrow-up"></i> パワーアップ <i class="fa-solid fa-coins"></i>'+upCost(lv)}</button>`
-      :`<button class="btn ${h.price.gems?'pu':'or'}" data-buy="${id}"><i class="fa-solid fa-lock-open"></i> なかまにする ${priceTxt(h.price)}</button>`}</div>`;
+      :`<button class="btn gr" data-goshop="1"><i class="fa-solid fa-box-open"></i> ボックスから出るよ！</button>`}</div>`;
     g.appendChild(c);
   });
   g.querySelectorAll('[data-sel]').forEach(b=>b.onclick=()=>{ SFX.play('click'); selectHero(b.dataset.sel); toast(HEROES[b.dataset.sel].name+' をえらんだ！'); });
-  g.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
-    const id=b.dataset.buy, h=HEROES[id], pr=h.price||{}; if(isOwned(id)) return;
-    if(pr.gems? save.gems<pr.gems : save.coins<(pr.coins||0)){ toast(pr.gems?'💎 ジェムがたりないよ！':'<i class="fa-solid fa-coins"></i> コインがたりないよ！'); return; }
-    confirmBox(`${h.name}（${h.title}）を ${pr.gems?'ジェム'+pr.gems:'コイン'+pr.coins} でなかまにする？`,()=>{
-      if(pr.gems) save.gems-=pr.gems; else save.coins-=pr.coins;
-      save.owned[id]=true; save.rev++; persist(); SFX.play('win'); toast(`🎉 ${h.name} がなかまになった！`); selectHero(id);
-    });
-  });
+  g.querySelectorAll('[data-goshop]').forEach(b=>b.onclick=()=>{ SFX.play('click'); showTab('shop'); });
   g.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.up, lv=save.levels[id], cost=upCost(lv);
     if(lv>=MAX_LV) return;
@@ -1264,24 +1297,45 @@ function bindLobby(){
   $('room-mode').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(NET.mode!=='host') return; save.mode=b.dataset.mode; persist(); renderLobby(); broadcastRoom(); });
 }
 function openBox(kind){
-  const mega=kind==='mega';
-  if(mega? save.gems<25 : save.coins<100){ toast(mega?'💎 ジェムがたりないよ！':'<i class="fa-solid fa-coins"></i> コインがたりないよ！'); return; }
-  if(mega) save.gems-=25; else save.coins-=100; persist(); renderLobby();
-  $('box-title').textContent=mega?'メガボックス':'ヒーローボックス'; $('box-icon').textContent=mega?'🎁':'📦'; $('box-icon').classList.remove('shake');
-  $('box-reward').innerHTML=''; const btn=$('box-btn'); btn.textContent='タップして開ける！'; $('box-modal').classList.add('on');
+  const B=BOXES[kind];
+  if(save.gems<B.price){ toast('💎 ジェムがたりないよ！'); return; }
+  save.gems-=B.price; save.rev++;
+  // 開ける前に中身を決めて保存（とちゅうで閉じても結果は変わらない）
+  let res;
+  if(Math.random()<B.hero){
+    const r=rollRarity(B.rar), id=pick(boxPool(r)), dup=isOwned(id);
+    if(dup) save.coins+=RARITY[r].coin; else save.owned[id]=true;
+    res={hero:id,r,dup};
+  } else { const c=Math.round(rand(B.coin[0],B.coin[1])/10)*10; save.coins+=c; res={coins:c}; }
+  persist();
+  $('box-title').textContent=B.name; $('box-icon').textContent=B.icon; $('box-icon').classList.remove('shake'); $('box-icon').style.display='';
+  $('box-reward').innerHTML=''; const btn=$('box-btn'); btn.textContent='タップして開ける！'; btn.disabled=false; $('box-modal').classList.add('on');
   let opened=false;
   btn.onclick=()=>{
     if(opened){ $('box-modal').classList.remove('on'); return; }
     opened=true; $('box-icon').classList.add('shake'); SFX.play('zap'); btn.disabled=true;
+    const big=res.hero&&res.r!=='R';
     setTimeout(()=>{
-      $('box-icon').classList.remove('shake'); $('box-icon').textContent='✨';
-      const coins = mega? Math.round(rand(300,800)/10)*10 : Math.round(rand(60,250)/10)*10;
-      const gems = mega? Math.round(rand(5,15)) : (Math.random()<0.25? Math.round(rand(2,8)) : 0);
-      save.coins+=coins; save.gems+=gems; save.rev++; persist(); renderLobby(); SFX.play('win');
-      $('box-reward').innerHTML=`<div class="reward"><span style="color:#eab308"><i class="fa-solid fa-coins"></i> +${coins}</span>${gems?` <span style="color:#a21caf;margin-left:10px"><i class="fa-solid fa-gem"></i> +${gems}</span>`:''}</div>`;
-      btn.disabled=false; btn.textContent='やったね！';
-    },900);
+      $('box-icon').classList.remove('shake');
+      if(res.hero){
+        const h=HEROES[res.hero]; $('box-icon').style.display='none';
+        $('box-reward').innerHTML=`<img class="box-hero ${res.r}" src="${THUMBS[res.hero]||''}" style="background:${h.grad}">
+          <div><span class="rar ${res.r}" style="font-size:12px">${RARITY[res.r].name}</span></div>
+          <div class="reward" style="font-family:inherit;font-size:24px">${h.name}<small style="display:block;font-size:12px;color:var(--sub)">${h.title}・${h.role}</small></div>
+          ${res.dup?`<div style="font-weight:900;color:var(--sub);margin-top:6px">もう持っているキャラ → <span style="color:#eab308"><i class="fa-solid fa-coins"></i> +${RARITY[res.r].coin}</span></div>`
+                   :`<div style="font-weight:900;color:#16a34a;margin-top:6px;font-size:16px">🎉 NEW！ なかまになった！</div>`}`;
+        SFX.play('win'); if(big) setTimeout(()=>SFX.play('ready'),350);
+        btn.textContent=res.dup?'やったね！':'つかってみる！';
+        if(!res.dup) btn.onclick=()=>{ $('box-modal').classList.remove('on'); selectHero(res.hero); showTab('home'); };
+      } else {
+        $('box-icon').textContent='✨';
+        $('box-reward').innerHTML=`<div class="reward"><span style="color:#eab308"><i class="fa-solid fa-coins"></i> +${res.coins}</span></div>`;
+        SFX.play('coin'); btn.textContent='OK';
+      }
+      renderLobby(); btn.disabled=false;
+    },res.hero?(big?1600:1100):900);
   };
+  renderLobby();
 }
 
 
