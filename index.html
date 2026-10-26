@@ -180,6 +180,9 @@ button{font-family:inherit;cursor:pointer}
 .mbox .help li{font-size:13px;font-weight:700;color:#475569;margin:6px 0 6px 18px}
 .mbox .help h4{font-size:14px;font-weight:900;margin-top:12px}
 kbd{display:inline-block;background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:3px;border-radius:6px;padding:0 6px;font-family:Orbitron;font-size:11px;color:var(--ink)}
+#upd-bar{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:300;display:none;align-items:center;gap:10px;background:#1f2a44;color:#fff;font-weight:900;font-size:13px;padding:8px 8px 8px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.3);white-space:nowrap;animation:fadeUp .3s}
+#upd-bar.on{display:flex}
+#upd-bar button{border:none;border-radius:999px;padding:8px 14px;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(180deg,#4ade80,#16a34a)}
 #toast{position:fixed;left:50%;top:76px;transform:translateX(-50%) translateY(-20px);background:#1f2a44;color:#fff;font-weight:900;font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:200;white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.25)}
 #toast.on{opacity:1;transform:translateX(-50%)}
 .box-open{text-align:center}
@@ -444,6 +447,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
           <div class="set-row"><label>マウス感度<small>バトル中のねらいの速さ</small></label><input type="range" id="set-sens" min="0.4" max="2" step="0.1" style="width:140px"></div>
           <div class="set-row"><label>データ引き継ぎ<small>別のスマホ・パソコンにコイン・キャラ・記録を移せます</small></label>
             <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn bl" style="flex:none;padding:9px 12px" id="xfer-export"><i class="fa-solid fa-upload"></i> コードを発行</button><button class="btn gr" style="flex:none;padding:9px 12px" id="xfer-import"><i class="fa-solid fa-download"></i> コードで読み込む</button></div></div>
+          <div class="set-row"><label>バージョン<small>GitHubに新しい版を上げると自動で知らせるよ</small></label><span id="ver-txt" class="orb" style="font-size:12px;color:var(--sub)">-</span><button class="btn gr" style="flex:none;padding:9px 12px" id="upd-check">確認</button></div>
           <div class="set-row"><label>データをリセット<small>すべての記録が消えます</small></label><button class="btn gr" style="flex:none;padding:9px 16px" id="set-reset">リセット</button></div>
         </div>
       </section>
@@ -501,7 +505,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
     <div class="res-card">
       <div class="res-title" id="res-title">VICTORY</div>
       <div class="res-sub" id="res-sub"></div>
-      <table class="res-tbl"><thead><tr><th>順位</th><th></th><th class="nmc">プレイヤー</th><th>倒した</th><th>キューブ</th><th>ダメージ</th></tr></thead><tbody id="res-body"></tbody></table>
+      <table class="res-tbl"><thead><tr><th>順位</th><th></th><th class="nmc">プレイヤー</th><th>倒した</th><th>回復</th><th>ダメージ</th></tr></thead><tbody id="res-body"></tbody></table>
       <div class="rew-row" id="res-rew"></div>
       <button class="btn or" style="width:100%;font-size:17px;padding:14px" id="res-btn">ロビーへもどる</button>
     </div>
@@ -513,7 +517,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <h3><i class="fa-solid fa-circle-question" style="color:#7c3aed"></i> あそびかた</h3>
   <div class="help">
     <h4>ルール：サバイバル</h4>
-    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>木箱をこわすと<b>パワーキューブ</b>が出てくる。拾うと体力と攻撃力がアップ！</li><li>攻撃は壁や木箱を通りぬけないよ。かくれて身を守ろう。</li></ul>
+    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
     <h4>オンライン（みんなで遊ぶ）</h4>
     <ul><li>「部屋をつくる」と5けたの<b>部屋コード</b>が出るよ。友だちに教えてあげよう。</li><li>友だちは「部屋に入る」でコードを入れると参加できる（最大3人）。</li><li>部屋をつくった人がモード（ソロ／トリオ）を選んでスタート！</li></ul>
     <h4>パソコン</h4>
@@ -562,8 +566,9 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <textarea id="xfer-text" spellcheck="false" autocomplete="off" style="width:100%;height:120px;border:2px solid var(--line);border-radius:14px;padding:10px;font-family:monospace;font-size:12px;word-break:break-all;resize:none"></textarea>
   <button class="btn or big" style="margin-top:10px" id="xfer-action">コピーする</button>
 </div></div>
+<div id="upd-bar"><span>🆕 新しいバージョンがあります</span><button id="upd-btn">更新する</button></div>
 <div id="toast"></div>
-<script>
+<script id="game-js">
 'use strict';
 /* =========================================================
    基本ユーティリティ
@@ -1252,7 +1257,7 @@ function renderHeroes(){
 function renderRecords(){
   const s=save.stats, rate=s.games?Math.round(s.wins/s.games*100):0;
   const fav=HERO_IDS.slice().sort((a,b)=>save.use[b]-save.use[a])[0];
-  const items=[['バトル数',s.games],['1位の回数',s.wins],['トップ3',s.top3],['1位率',rate+'%'],['最高順位',s.bestRank?s.bestRank+'位':'-'],['最高トロフィー',save.best],['倒した数',s.kills],['やられた数',s.deaths],['集めたキューブ',s.cubes],['与えたダメージ',s.dmg.toLocaleString()],['オンライン対戦',s.online],['よく使うキャラ',s.games?HEROES[fav].name:'-']];
+  const items=[['バトル数',s.games],['1位の回数',s.wins],['トップ3',s.top3],['1位率',rate+'%'],['最高順位',s.bestRank?s.bestRank+'位':'-'],['最高トロフィー',save.best],['倒した数',s.kills],['やられた数',s.deaths],['拾った回復',s.cubes],['与えたダメージ',s.dmg.toLocaleString()],['オンライン対戦',s.online],['よく使うキャラ',s.games?HEROES[fav].name:'-']];
   $('rec-grid').innerHTML=items.map(([k,v])=>`<div class="card rec"><small>${k}</small><b>${v}</b></div>`).join('');
 }
 function selectHero(id){ if(!isOwned(id)) return; save.hero=id; persist(); setStageHero(id); netHeroChanged(); renderLobby(); }
@@ -1887,7 +1892,7 @@ function buildWorld(){
   });
   const ct=crateTex(), crateM=tm(0xffffff,{map:ct});
   const crateGeo=new THREE.BoxGeometry(1.7,1.4,1.7);
-  const allCr=[]; CRATES.forEach(c=>{ allCr.push(c); allCr.push([-c[0],-c[1]]); });
+  const allCr=[]; // 木箱はなくした（CRATES は使わない）
   allCr.forEach(([x,z],idx)=>{
     const m=new THREE.Mesh(crateGeo,crateM); m.position.set(x,0.7,z); m.castShadow=m.receiveShadow=true;
     const ol=new THREE.Mesh(crateGeo,OUTLINE_MAT); ol.scale.setScalar(1.05); m.add(ol); S.add(m);
@@ -1912,37 +1917,56 @@ function buildWorld(){
   G.ultLine=new THREE.Mesh(ag,G.ultMat); G.ultLine.position.y=0.07; S.add(G.ultLine); G.ultLine.visible=false;
 }
 
-/* ---------- パワーキューブ ---------- */
-const CUBE_GEO=new THREE.BoxGeometry(0.6,0.6,0.6);
-function spawnCube(from,to,flyT=0.55,id){
+/* ---------- 回復ハート（敵をたおすと出る） ---------- */
+const HEAL_RATE=0.4;      // 拾うと最大体力の40%回復
+const PICK_R=1.9;         // これより近づくと拾える
+const MAGNET_R=4.2;       // この中に入ると吸い寄せられる
+let HEART_GEO=null;
+function heartGeo(){
+  if(HEART_GEO) return HEART_GEO;
+  const sh=new THREE.Shape(); sh.moveTo(0,-0.42);
+  sh.bezierCurveTo(-0.1,-0.3,-0.5,-0.05,-0.5,0.17); sh.bezierCurveTo(-0.5,0.4,-0.28,0.5,-0.15,0.5); sh.bezierCurveTo(-0.05,0.5,0,0.42,0,0.35);
+  sh.bezierCurveTo(0,0.42,0.05,0.5,0.15,0.5); sh.bezierCurveTo(0.28,0.5,0.5,0.4,0.5,0.17); sh.bezierCurveTo(0.5,-0.05,0.1,-0.3,0,-0.42);
+  HEART_GEO=new THREE.ExtrudeGeometry(sh,{depth:0.22,bevelEnabled:true,bevelThickness:0.08,bevelSize:0.06,bevelSegments:3,curveSegments:10}); HEART_GEO.center();
+  return HEART_GEO;
+}
+function spawnCube(from,to,flyT=0.4,id){
   if(id==null){ id=G.nid++; }
-  const mat=new THREE.MeshToonMaterial({color:0x4ade80,emissive:0x14532d,gradientMap:gradTex()});
-  const g=new THREE.Group(); const c=new THREE.Mesh(CUBE_GEO,mat); c.castShadow=true; g.add(c);
-  const ol=new THREE.Mesh(CUBE_GEO,OUTLINE_MAT); ol.scale.setScalar(1.1); c.add(ol);
-  const bl=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.4,0.64),new THREE.MeshBasicMaterial({color:0xfef08a})); bl.rotation.x=0.4; c.add(bl);
-  const bl2=bl.clone(); bl2.rotation.set(0,Math.PI/2,0.4); c.add(bl2);
-  glowSprite(0x86efac,1.6,g,0,0,0,0.6); G.scene.add(g); g.position.copy(from);
+  const g=new THREE.Group();
+  const tilt=new THREE.Group(); tilt.rotation.x=-0.75; g.add(tilt);   // カメラのほうに向ける
+  const c=new THREE.Mesh(heartGeo(),new THREE.MeshToonMaterial({color:0xf43f5e,emissive:0x7f1d1d,gradientMap:gradTex()})); c.castShadow=true; c.scale.setScalar(1.15); tilt.add(c);
+  const ol=new THREE.Mesh(heartGeo(),OUTLINE_MAT); ol.scale.setScalar(1.08); c.add(ol);
+  const hl=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,6),new THREE.MeshBasicMaterial({color:0xffffff})); hl.position.set(-0.22,0.25,0.17); c.add(hl);
+  glowSprite(0xfb7185,2.2,g,0,0,0,0.65);
+  const rg=new THREE.Mesh(RING_GEO,new THREE.MeshBasicMaterial({color:0x4ade80,transparent:true,opacity:0.6,depthWrite:false})); rg.scale.setScalar(0.9); g.add(rg);
+  G.scene.add(g); g.position.copy(from);
   const p=to.clone(); if(!G.isClient){ for(let k=0;k<10&&pointInWall(p.x,p.z,0.45);k++){ p.x+=rand(-1.5,1.5); p.z+=rand(-1.5,1.5); } p.x=clamp(p.x,-BOUND_X,BOUND_X); p.z=clamp(p.z,-BOUND_Z,BOUND_Z); } p.y=0;
-  const cube={id,mesh:g,core:c,from:from.clone(),pos:p,fly:0,flyT,delay:flyT+0.15,ph:Math.random()*6};
+  const cube={id,mesh:g,core:c,ring:rg,from:from.clone(),pos:p,fly:0,flyT,delay:flyT+0.1,ph:Math.random()*6};
   G.cubes.push(cube);
   ev('c+',id,r2(from.x),r2(from.y),r2(from.z),r2(p.x),r2(p.z),flyT);
   return cube;
 }
 function removeCube(cube,picker){
   const i=G.cubes.indexOf(cube); if(i>=0) G.cubes.splice(i,1);
-  G.scene.remove(cube.mesh); disposeScene(cube.mesh);
-  burst(cube.mesh.position,12,{color:[0x86efac,0xfef08a,0xffffff],speed:4,size:0.35,life:0.5,add:true});
-  streakBurst(cube.mesh.position,10,[0x86efac,0xfef08a],7,0.3);
+  G.scene.remove(cube.mesh); cube.mesh.traverse(o=>{ if(o.material&&o.material!==OUTLINE_MAT) o.material.dispose(); });
+  burst(cube.mesh.position,14,{color:[0xfb7185,0x4ade80,0xffffff],speed:4,size:0.35,life:0.5,add:true});
+  streakBurst(cube.mesh.position,10,[0xfda4af,0x86efac],7,0.3);
   if(picker) picker.addCube();
 }
+const needsHeal=b=>!b.dead&&b.hp<b.maxHp-1;
 function updateCubes(dt){
   for(let i=G.cubes.length-1;i>=0;i--){
     const g=G.cubes[i]; g.delay-=dt;
-    if(g.fly<g.flyT){ g.fly+=dt; const k=Math.min(1,g.fly/g.flyT); g.mesh.position.lerpVectors(g.from,g.pos,k); g.mesh.position.y=0.8+Math.sin(k*Math.PI)*2.2*(1-k*0.3); if(k>=1) ring(g.pos,0x4ade80,0.2,1.2,0.35); }
-    else g.mesh.position.set(g.pos.x,0.8+Math.sin(G.t*3+g.ph)*0.15,g.pos.z);
-    g.core.rotation.y+=dt*2; g.core.rotation.x=Math.sin(G.t*1.5+g.ph)*0.3;
+    if(g.fly<g.flyT){ g.fly+=dt; const k=Math.min(1,g.fly/g.flyT); g.mesh.position.lerpVectors(g.from,g.pos,k); g.mesh.position.y=0.9+Math.sin(k*Math.PI)*1.8*(1-k*0.3); if(k>=1) ring(g.pos,0xfb7185,0.2,1.4,0.35); continue; }
+    // 体力がへっている人が近くにいたら吸い寄せられる（拾いやすくする）
+    let near=null, nd=MAGNET_R;
+    if(g.delay<=0&&G.state==='play') for(const b of G.brawlers){ if(!needsHeal(b)) continue; const d=d2(b.pos,g.pos); if(d<nd){ nd=d; near=b; } }
+    if(near){ const k=Math.min(1,dt*(5+(MAGNET_R-nd)*3)); g.pos.x+=(near.pos.x-g.pos.x)*k; g.pos.z+=(near.pos.z-g.pos.z)*k; }
+    g.mesh.position.set(g.pos.x,0.9+Math.sin(G.t*3+g.ph)*0.15,g.pos.z);
+    g.core.rotation.y=Math.sin(G.t*(near?7:2.5)+g.ph)*0.5; const pu=1+Math.sin(G.t*6+g.ph)*0.08; g.core.scale.setScalar(1.15*pu);
+    g.ring.position.y=-g.mesh.position.y+0.08; g.ring.scale.setScalar(0.9+Math.sin(G.t*4+g.ph)*0.1);
     if(g.delay>0||G.state!=='play'||G.isClient) continue;
-    for(const b of G.brawlers){ if(b.dead) continue; if(d2(b.pos,g.pos)<1.2){ ev('c-',g.id,b.idx); removeCube(g,b); break; } }
+    for(const b of G.brawlers){ if(!needsHeal(b)) continue; if(d2(b.pos,g.pos)<PICK_R){ ev('c-',g.id,b.idx); removeCube(g,b); break; } }
   }
 }
 /* ---------- 安全地帯 ---------- */
@@ -2018,10 +2042,10 @@ class Brawler{
   }
   face(dir){ this.faceTarget=Math.atan2(dir.x,dir.z); this.lastShot=G.t; }
   addCube(){
-    this.cubes++; this.stats.cubes++;
-    if(!G.isClient){ this.maxHp+=400; this.hp+=400; this.dmg=Math.round(this.baseDmg*(1+0.1*this.cubes)); }
-    ring(this.pos,0x4ade80,0.3,2,0.4); dmgText(this.pos,'パワーUP!','heal');
-    for(let i=0;i<10;i++) emit(this.pos.clone().add(new V3(rand(-.5,.5),rand(0,0.4),rand(-.5,.5))),{color:pick([0x4ade80,0xfef08a]),size:0.35,vel:new V3(0,rand(2,4),0),life:0.7,add:true});
+    this.stats.cubes++;
+    heal(this,Math.round(this.maxHp*HEAL_RATE));   // 体力だけ回復（攻撃力・最大体力は変わらない）
+    ring(this.pos,0x4ade80,0.3,2,0.4); ring(this.pos,0xfb7185,0.2,1.4,0.3);
+    for(let i=0;i<12;i++) emit(this.pos.clone().add(new V3(rand(-.5,.5),rand(0,0.4),rand(-.5,.5))),{color:pick([0x4ade80,0xfb7185,0xffffff]),size:0.35,vel:new V3(0,rand(2,4),0),life:0.7,add:true});
     if(this.near(14)) SFX.play('gem',this.isPlayer?1:0.4);
   }
   near(r=16){ return this.isPlayer || d2(this.pos,G.camT)<r; }
@@ -2197,10 +2221,10 @@ class Brawler{
       ai.t=rand(0.3,0.6); if(Math.random()<0.3) ai.strafe*=-1; ai.crate=null;
       let goal=null;
       let leader=null; for(const b of G.brawlers){ if(b!==this&&b.team===this.team&&b.isHuman&&!b.dead){ leader=b; break; } }
-      let cube=null, cd=1e9; for(const c of G.cubes){ const d=d2(c.pos,this.pos); if(d<cd&&inZone(c.pos)){ cd=d; cube=c; } }
+      let cube=null, cd=1e9; if(hpR<0.9) for(const c of G.cubes){ const d=d2(c.pos,this.pos); if(d<cd&&inZone(c.pos)){ cd=d; cube=c; } }
       if(d2(this.pos,Z.c)>Z.r-3) goal=intoZone(this.pos);
       else if(target && hpR<0.5 && td<11) goal=intoZone(this.pos.clone().add(this.pos.clone().sub(target.pos).setY(0).setLength(7)));
-      else if(cube && (cd<10 || !target || td>12) && (!leader||d2(cube.pos,leader.pos)<12)) goal=cube.pos.clone();
+      else if(cube && (cd<12 || hpR<0.5 || !target || td>12) && (!leader||d2(cube.pos,leader.pos)<12)) goal=cube.pos.clone();
       else if(target && td<ai.brave && (hpR>0.55||target.hp<this.hp)){
         const want=this.hero.melee?2.2:this.hero.range*(this.hero.id==='chronos'?0.55:0.7);
         const to=target.pos.clone().sub(this.pos).setY(0).normalize();
@@ -2326,8 +2350,7 @@ function killBrawler(b,killer){
   const teamDead=!G.brawlers.some(x=>x.team===b.team&&!x.dead);
   if(teamDead){ const r=aliveTeams().size+1; G.brawlers.forEach(x=>{ if(x.team===b.team) x.rank=r; }); }
   ev('k',b.idx,killer&&killer.idx!=null?killer.idx:-1,teamDead?b.rank:0);
-  const drop=Math.max(1,b.cubes);
-  for(let i=0;i<drop;i++){ const a=Math.random()*Math.PI*2, r=rand(0.8,2.4); spawnCube(b.pos.clone().setY(1),new V3(b.pos.x+Math.cos(a)*r,0,b.pos.z+Math.sin(a)*r),0.5); }
+  { const a=Math.random()*Math.PI*2, r=rand(0.2,0.8); spawnCube(b.pos.clone().setY(1),new V3(b.pos.x+Math.cos(a)*r,0,b.pos.z+Math.sin(a)*r),0.5); }
   checkEnd();
 }
 function checkEnd(){
@@ -2904,7 +2927,7 @@ function startMatch(setup,myHuman){
   ensureRenderer();
   applyOrientation(); tryLandscapeLock();
   G.renderer.setSize(VW(),VH());
-  document.querySelectorAll('.modal').forEach(m=>m.classList.remove('on'));
+  document.querySelectorAll('.modal').forEach(m=>m.classList.remove('on')); $('upd-bar').classList.remove('on');
   $('lobby').classList.remove('active'); $('game-screen').classList.add('active');
   G.isClient=NET.mode==='client'; G.mode=setup.mode; NET.inMatch=NET.mode!=='off'; NET.ev=[]; NET.sendT=0; NET.inT=0;
   buildWorld(); onResize();
@@ -2989,7 +3012,7 @@ function exitMatchToLobby(){
   $('game-screen').classList.remove('active','playing'); $('lobby').classList.add('active');
   G.state='lobby'; G.paused=false; G.menuOpen=false; G.isClient=false; NET.inMatch=false;
   $('labels').innerHTML=''; $('fx-layer').innerHTML='';
-  ST.lastW=0; renderLobby(); showTab('home');
+  ST.lastW=0; renderLobby(); showTab('home'); showUpdBar();
 }
 function backToLobby(){
   SFX.play('click');
@@ -3152,6 +3175,43 @@ function updateHUD(dt){
   $('game-screen').classList.toggle('playing',inBattle()&&!G.menuOpen&&!IS_TOUCH);
 }
 
+/* =========================================================
+   自動アップデート確認
+   ホーム画面に置いたアプリは、前に開いたページをそのまま出し続けることがある。
+   そこで、サーバーの index.html をキャッシュなしで取りに行き、
+   ゲームのプログラム部分が今動いているものと違えば「更新する」を出す。
+   （版の番号を手で書きかえる必要はない）
+========================================================= */
+function hashText(t){ let h=0x811c9dc5; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return h.toString(36); }
+const BUILD=hashText(document.getElementById('game-js').textContent);
+let updReady=false, updLast=0;
+async function checkUpdate(manual){
+  if(location.protocol==='file:'){ if(manual) toast('パソコンのファイルで開いているときは確認できないよ'); return; }
+  const now=Date.now(); if(!manual&&now-updLast<60000) return; updLast=now;
+  try{
+    const r=await fetch(location.pathname+'?_upd='+now,{cache:'no-store'}); if(!r.ok) throw 0;
+    const doc=new DOMParser().parseFromString(await r.text(),'text/html');
+    const js=doc.getElementById('game-js'); if(!js) return;
+    if(hashText(js.textContent)!==BUILD){ updReady=true; showUpdBar(); }
+    else if(manual) toast('いまの版が最新だよ');
+  }catch(e){ if(manual) toast('確認できませんでした。ネットにつないでね'); }
+}
+function showUpdBar(){ if(updReady&&G.state==='lobby') $('upd-bar').classList.add('on'); }
+function doUpdate(){
+  if(NET.mode!=='off'){ toast('部屋を出てから更新してね'); return; }
+  // URLを少し変えて読みこみ直すと、古いキャッシュを使わずに最新版が開く
+  location.replace(location.pathname+'?v='+Date.now());
+}
+function bindUpdate(){
+  $('ver-txt').textContent=BUILD;
+  $('upd-btn').onclick=doUpdate;
+  $('upd-check').onclick=()=>{ SFX.play('click'); checkUpdate(true); };
+  setTimeout(()=>checkUpdate(false),3000);
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkUpdate(false); });
+  addEventListener('pageshow',()=>checkUpdate(false));
+  setInterval(()=>checkUpdate(false),10*60*1000);
+}
+
 /* ---------- ループ ---------- */
 let lastT=performance.now();
 const NO_RENDER=QS.get('norender')==='1';
@@ -3167,7 +3227,7 @@ function loop(now){
 /* ---------- 起動 ---------- */
 function boot(){
   initStage(); makeThumbs(); setStageHero(save.hero);
-  bindLobby(); bindInput(); renderLobby();
+  bindLobby(); bindInput(); bindUpdate(); renderLobby();
   requestAnimationFrame(loop);
   const j=(QS.get('join')||'').replace(/\D/g,'');
   if(j.length===5){ openRoom(); $('room-code-in').value=j; }
