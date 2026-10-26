@@ -346,6 +346,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
 .mvp{color:#f59e0b}
 .rew-row{display:flex;gap:10px;justify-content:center;margin:14px 0}
 .rew{background:#f7f9fd;border-radius:14px;padding:10px 14px;font-family:Orbitron;font-weight:900;font-size:18px;display:flex;align-items:center;gap:6px}
+.gem-rew{color:#a21caf;animation:pop .5s .3s cubic-bezier(.3,1.6,.5,1) both}
 .rew .ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px}
 </style>
 </head>
@@ -432,7 +433,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
 
       <!-- SHOP -->
       <section class="tab" id="tab-shop">
-        <div class="sec-h"><div class="ic" style="background:linear-gradient(180deg,#c084fc,#7c3aed)"><i class="fa-solid fa-box-open"></i></div><div><h2>ボックス</h2><p>ジェムでボックスを開けて新しいキャラをゲット！ キャラが出なかったときはコインがもらえるよ</p></div></div>
+        <div class="sec-h"><div class="ic" style="background:linear-gradient(180deg,#c084fc,#7c3aed)"><i class="fa-solid fa-box-open"></i></div><div><h2>ボックス</h2><p>ジェムでボックスを開けて新しいキャラをゲット！ ジェムはバトルでトップ3に入るともらえるよ（1位 3個・2位 2個・3位 1個）</p></div></div>
         <div class="shop-grid">
           <div class="card box-card">
             <div class="box-art" style="background:linear-gradient(160deg,#fde68a,#f59e0b)"><i class="fa-solid fa-box"></i></div>
@@ -536,7 +537,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <h3><i class="fa-solid fa-circle-question" style="color:#7c3aed"></i> あそびかた</h3>
   <div class="help">
     <h4>ルール：サバイバル</h4>
-    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>ホームの「<b>敵のつよさ</b>」でCPUの強さをレベル1〜10からえらべるよ。強いレベルほどトロフィーとコインが多くもらえる！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
+    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>バトルで<b>トップ3</b>に入ると<b>ジェム</b>がもらえる！ 1位 3個・2位 2個・3位 1個。ジェムでボックスを開けよう。</li><li>ホームの「<b>敵のつよさ</b>」でCPUの強さをレベル1〜10からえらべるよ。強いレベルほどトロフィーとコインが多くもらえる！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
     <h4>オンライン（みんなで遊ぶ）</h4>
     <ul><li>「部屋をつくる」と5けたの<b>部屋コード</b>が出るよ。友だちに教えてあげよう。</li><li>友だちは「部屋に入る」でコードを入れると参加できる（最大3人）。</li><li>部屋をつくった人がモード（ソロ／トリオ）を選んでスタート！</li></ul>
     <h4>パソコン</h4>
@@ -3065,6 +3066,8 @@ function showResult(){
   const tr=tr0>0?Math.max(1,Math.round(tr0*RW)):tr0;     // 勝ったときだけレベルで増減（負けのマイナスは同じ）
   const co=Math.round(((CO[r-1]||10)+st.kills*5+st.cubes*2)*RW), ex=Math.max(10,40-(r-1)*(trio?8:3));
   const firstClear = r===1 && !((save.diffClear>>(G.diff-1))&1);
+  const GEM_REW=[3,2,1], ge=GEM_REW[r-1]||0;   // トップ3でジェム：1位3個・2位2個・3位1個
+  save.gems+=ge;
   if(r===1) save.diffClear|=1<<(G.diff-1);
   const oldTr=save.trophies;
   save.trophies=Math.max(0,save.trophies+tr); save.best=Math.max(save.best,save.trophies); save.coins+=co; save.exp+=ex;
@@ -3076,7 +3079,9 @@ function showResult(){
   save.rev++; persist();
   const realTr=save.trophies-oldTr;
   $('res-rew').innerHTML=`<div class="rew"><span class="ic tr"><i class="fa-solid fa-trophy"></i></span>${realTr>=0?'+':''}${realTr}</div><div class="rew"><span class="ic co"><i class="fa-solid fa-coins"></i></span>+${co}</div><div class="rew"><span class="ic" style="background:linear-gradient(180deg,#60a5fa,#7c3aed)">EX</span>+${ex}</div>`;
+  if(ge) $('res-rew').innerHTML+=`<div class="rew gem-rew"><span class="ic ge"><i class="fa-solid fa-gem"></i></span>+${ge}</div>`;
   $('res-rew').innerHTML+=`<div class="rew"><span class="ic" style="background:${diffColor(G.diff)}">Lv${G.diff}</span>×${RW.toFixed(1)}</div>`;
+  if(ge) setTimeout(()=>SFX.play('gem'),500);
   if(firstClear) $('res-sub').textContent+=`　★ Lv.${G.diff} はじめての1位！`;
   $('res-btn').textContent=NET.mode==='off'?'ロビーへもどる':'部屋にもどる';
   $('result').classList.add('on');
