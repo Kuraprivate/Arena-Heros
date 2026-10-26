@@ -75,7 +75,21 @@ button{font-family:inherit;cursor:pointer}
 .sk{background:rgba(255,255,255,.9);border-radius:14px;padding:8px 10px;font-size:11px;font-weight:700;color:#475569}
 .sk b{display:block;font-size:13px;color:var(--ink);font-weight:900}
 .sk b i{margin-right:4px}
-.mode-row{display:flex;gap:10px;margin-top:12px;align-items:stretch}
+.mode-row{display:flex;gap:10px;margin-top:12px;align-items:stretch;flex-wrap:wrap}
+.mode-row .mode-tile{min-width:200px}
+.diff-box{flex:1.25;min-width:250px;background:#fff;border:2px solid var(--line);border-radius:18px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.diff-hd{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:13px;color:var(--ink)}
+.diff-hd b{font-size:12px;color:#fff;padding:2px 10px;border-radius:999px}
+.diff-ctl{display:flex;align-items:center;gap:6px}
+.diff-step{width:30px;height:30px;flex:none;border:none;border-radius:10px;background:#eef2f9;color:var(--ink);font-size:18px;font-weight:900;line-height:1}
+.diff-step:disabled{opacity:.35}
+.diff-pips{flex:1;display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.diff-pips button{position:relative;height:30px;border:none;border-radius:8px;font-family:Orbitron;font-weight:900;font-size:11px;color:#94a3b8;background:#eef2f9;padding:0}
+.diff-pips button.on{color:#fff;transform:translateY(-2px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.diff-pips button.fill{color:#fff;opacity:.55}
+.diff-pips button .st{position:absolute;top:-8px;right:-3px;font-size:11px;color:#eab308;text-shadow:0 0 2px #fff}
+.diff-box.ro .diff-pips button,.diff-box.ro .diff-step{pointer-events:none}
+#diff-info{font-size:10.5px;font-weight:700;color:var(--sub);line-height:1.5}
 .mode-tile{flex:1;border:none;text-align:left;border-radius:18px;padding:12px 14px;color:#fff;background:linear-gradient(120deg,#16a34a,#0d9488);box-shadow:0 4px 0 #166534;position:relative;overflow:hidden}
 .mode-tile.trio{background:linear-gradient(120deg,#2563eb,#7c3aed);box-shadow:0 4px 0 #3730a3}
 .mode-tile::after{content:"\f54c";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;right:-6px;bottom:-16px;font-size:74px;opacity:.18}
@@ -398,6 +412,11 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
             </div>
             <div class="mode-row">
               <button class="mode-tile" id="mode-tile"><span class="sw"><i class="fa-solid fa-rotate"></i> モード切替</span><small id="mode-small"></small><h3 id="mode-name"></h3><p id="mode-desc"></p></button>
+              <div class="diff-box" id="diff-box">
+                <div class="diff-hd"><span><i class="fa-solid fa-gauge-high"></i> 敵のつよさ</span><b id="diff-name"></b></div>
+                <div class="diff-ctl"><button class="diff-step" id="diff-dn" aria-label="よわく">−</button><div class="diff-pips" id="diff-pips"></div><button class="diff-step" id="diff-up" aria-label="つよく">＋</button></div>
+                <small id="diff-info"></small>
+              </div>
             </div>
             <button class="lstart" id="start-btn"><i class="fa-solid fa-play"></i> バトルスタート<small>トロフィーをかけて戦おう！</small></button>
             <button class="lonline" id="online-btn"><i class="fa-solid fa-globe"></i> みんなで遊ぶ（オンライン）<span class="badge" id="online-badge">最大3人</span></button>
@@ -517,7 +536,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <h3><i class="fa-solid fa-circle-question" style="color:#7c3aed"></i> あそびかた</h3>
   <div class="help">
     <h4>ルール：サバイバル</h4>
-    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
+    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>ホームの「<b>敵のつよさ</b>」でCPUの強さをレベル1〜10からえらべるよ。強いレベルほどトロフィーとコインが多くもらえる！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
     <h4>オンライン（みんなで遊ぶ）</h4>
     <ul><li>「部屋をつくる」と5けたの<b>部屋コード</b>が出るよ。友だちに教えてあげよう。</li><li>友だちは「部屋に入る」でコードを入れると参加できる（最大3人）。</li><li>部屋をつくった人がモード（ソロ／トリオ）を選んでスタート！</li></ul>
     <h4>パソコン</h4>
@@ -595,7 +614,7 @@ const heroMap = v => Object.fromEntries(HERO_IDS.map(id=>[id,v]));
 const DEF_SAVE = () => ({name:'プレイヤー',coins:300,gems:20,trophies:0,best:0,exp:0,hero:'chronos',mode:'solo',sens:1,
   levels:heroMap(1),owned:{chronos:true,tesla:true,lumina:true},sound:true,shadows:true,
   stats:{games:0,wins:0,top3:0,bestRank:0,kills:0,deaths:0,cubes:0,dmg:0,online:0},
-  use:heroMap(0),daily:'',mission:{date:'',wins:0,claimed:false},rev:0,lineage:[]});
+  use:heroMap(0),daily:'',mission:{date:'',wins:0,claimed:false},rev:0,lineage:[],diff:3,diffClear:0});
 let save = loadSave();
 function loadSave(){
   const d = DEF_SAVE(), s = store.get('save', {});
@@ -606,6 +625,7 @@ function loadSave(){
   o.owned  = Object.assign(DEF_SAVE().owned,  s.owned||{});
   if(!HERO_IDS.includes(o.hero)||!o.owned[o.hero]) o.hero='chronos';
   o.mission= Object.assign(DEF_SAVE().mission,s.mission||{});
+  o.diff=clamp(Math.round(Number(o.diff)||3),1,10); o.diffClear=(o.diffClear|0)&1023;
   return o;
 }
 function persist(){ store.set('save', save); }
@@ -739,6 +759,28 @@ function renderRates(){
       return `<div class="rate-row"><span class="rar ${r}" style="margin:0">${RARITY[r].name}</span><small>${pool.map(id=>HEROES[id].name).join('・')}</small><b>${pct(R[r]||0)}</b></div>`; }).join('')
       +`<div class="rate-row"><span>🪙 コイン</span><b>${pct(1-BOXES[k].hero)}</b></div>`; });
 }
+/* ---------- 敵のつよさ（レベル1〜10） ---------- */
+const DIFF_MAX=10;
+const DIFF_NAMES=['','とてもかんたん','かんたん','ややかんたん','ふつう','ややむずかしい','むずかしい','とてもむずかしい','つよい','すごくつよい','さいきょう'];
+// レベルごとの CPU の強さ（k=0 がレベル1、k=1 がレベル10）
+function diffParams(L){
+  const k=(clamp(L,1,DIFF_MAX)-1)/(DIFF_MAX-1);
+  return {
+    lv:     Math.max(1,Math.round(1+k*(MAX_LV-1))), // キャラのパワー（Lv1〜7）
+    dmg:    0.5+k*0.6,     // 攻撃力の倍率 0.5〜1.1
+    hp:     0.75+k*0.35,   // 体力の倍率 0.75〜1.1
+    aim:    0.5-k*0.44,    // ねらいのブレ（ラジアン）0.5〜0.06
+    lead:   Math.min(1,0.15+k*1.1), // 相手の動きを先読みする量 0.15〜1（Lv8くらいで完ぺき）
+    atkGap: 2.4-k*1.55,    // 攻撃の間かくの倍率 2.4〜0.85（小さいほど連射）
+    think:  1.9-k*1.0,     // 判断のおそさの倍率 1.9〜0.9
+    brave:  0.55+k*0.55,   // せめてくる距離の倍率 0.55〜1.1
+    ultWait:4-k*3.3,       // 必殺技をためらう時間の倍率 4〜0.7
+    speed:  0.85+k*0.15,   // 移動の速さの倍率 0.85〜1.0
+    reward: 0.5+k*1.0      // トロフィー・コインの倍率 0.5〜1.5
+  };
+}
+const diffColor = L => `hsl(${Math.round(130-(L-1)/9*130)},75%,45%)`;
+const curDiff = () => NET.mode==='client' ? (NET.roomDiff||3) : save.diff;
 const heroPower = id => Math.round((HEROES[id].hp + HEROES[id].dmg*3)*lvMult(save.levels[id])/10);
 
 /* =========================================================
@@ -1224,9 +1266,26 @@ function renderLobby(){
   const mw=Math.min(3,save.mission.wins); $('mis-txt').textContent=mw+'/3'; $('mis-pg').style.width=(mw/3*100)+'%';
   const mb=$('mis-btn'); mb.disabled=!(mw>=3&&!save.mission.claimed); mb.textContent=save.mission.claimed?'達成！':'うけとる';
   $('mini-rec').textContent=`1位 ${save.stats.wins}回・トップ3 ${save.stats.top3}回　最高🏆${save.best}`;
-  renderHeroes(); renderRecords(); renderRates();
+  renderDiff(); renderHeroes(); renderRecords(); renderRates();
   $('set-name').value=save.name; $('set-sound').classList.toggle('on',save.sound); $('set-shadow').classList.toggle('on',save.shadows); $('set-sens').value=save.sens;
   if(NET.mode!=='off') renderRoom();
+}
+function renderDiff(){
+  const L=curDiff(), D=diffParams(L), ro=NET.mode==='client';
+  $('diff-box').classList.toggle('ro',ro);
+  const nm=$('diff-name'); nm.textContent=`Lv.${L} ${DIFF_NAMES[L]}`; nm.style.background=diffColor(L);
+  $('diff-pips').innerHTML=Array.from({length:DIFF_MAX},(_,i)=>{ const n=i+1, col=diffColor(n);
+    return `<button data-diff="${n}" class="${n===L?'on':n<L?'fill':''}" style="${n<=L?'background:'+col:''}">${n}${save.diffClear>>(n-1)&1?'<span class="st">★</span>':''}</button>`; }).join('');
+  $('diff-dn').disabled=ro||L<=1; $('diff-up').disabled=ro||L>=DIFF_MAX;
+  const aim=D.aim>0.4?'へた':D.aim>0.25?'ふつう':D.aim>0.12?'うまい':'すごくうまい';
+  $('diff-info').innerHTML=ro?`部屋をつくった人が決めるよ（いまは Lv.${L}）`
+    :`敵のパワー Lv.${D.lv}・ねらい ${aim}・報酬 <b style="color:${D.reward>=1?'#16a34a':'#64748b'}">×${D.reward.toFixed(1)}</b>　<span style="color:#eab308">★</span>＝1位をとったレベル`;
+  $('diff-pips').querySelectorAll('[data-diff]').forEach(b=>b.onclick=()=>setDiff(+b.dataset.diff));
+}
+function setDiff(L){
+  if(NET.mode==='client'){ toast('つよさは部屋をつくった人が決めるよ'); return; }
+  L=clamp(L,1,DIFF_MAX); if(L===save.diff) return;
+  save.diff=L; persist(); SFX.play('click'); renderDiff(); if(NET.mode==='host') broadcastRoom();
 }
 function renderHeroes(){
   const g=$('hero-grid'); g.innerHTML='';
@@ -1273,6 +1332,8 @@ function bindLobby(){
   $('st-change').onclick=()=>{ SFX.play('click'); showTab('heroes'); };
   const cyc=d=>{ SFX.play('click'); const L=HERO_IDS.filter(isOwned); const i=L.indexOf(save.hero); selectHero(L[(i+d+L.length)%L.length]); };
   $('st-prev').onclick=()=>cyc(-1); $('st-next').onclick=()=>cyc(1);
+  $('diff-dn').onclick=()=>setDiff(save.diff-1);
+  $('diff-up').onclick=()=>setDiff(save.diff+1);
   $('mode-tile').onclick=()=>{ if(NET.mode==='client'){ toast('モードは部屋をつくった人が決めるよ'); return; } SFX.play('click'); save.mode=save.mode==='solo'?'trio':'solo'; persist(); renderLobby(); if(NET.mode==='host') broadcastRoom(); };
   $('start-btn').onclick=()=>{ SFX.init(); SFX.play('click');
     if(NET.mode==='host'){ hostStartMatch(); return; }
@@ -1384,6 +1445,7 @@ function packSave(d){
   STAT_KEYS.forEach(k=>w.u(d.stats[k]));
   w.s(d.daily); w.s(d.mission.date); w.u(d.mission.wins); w.u(d.mission.claimed?1:0);
   w.s(d.id); w.u(d.rev); const an=(d.lineage||[]).slice(-8); w.u(an.length); an.forEach(w.s);
+  w.u(d.diff); w.u(d.diffClear);   // あとから足した項目（古いコードにはない）
   return w.bytes();
 }
 function unpackSave(b){
@@ -1394,6 +1456,7 @@ function unpackSave(b){
   STAT_KEYS.forEach(k=>d.stats[k]=r.u());
   d.daily=r.s(); d.mission.date=r.s(); d.mission.wins=r.u(); d.mission.claimed=!!r.u();
   d.id=r.s(); d.rev=r.u(); d.lineage=[]; for(let i=r.u();i>0;i--) d.lineage.push(r.s());
+  try{ d.diff=r.u(); d.diffClear=r.u(); }catch(e){ d.diff=3; d.diffClear=0; }
   return d;
 }
 function encodeSaveCode(){
@@ -1426,6 +1489,7 @@ function applySaveData(d){
   STAT_KEYS.forEach(k=>o.stats[k]=num(d.stats[k],0,1e12));
   o.hero=o.owned[d.hero]?d.hero:'chronos'; o.mode=d.mode==='trio'?'trio':'solo';
   o.daily=String(d.daily||''); o.mission={date:String(d.mission.date||''),wins:num(d.mission.wins,0,99),claimed:!!d.mission.claimed};
+  o.diff=num(d.diff||3,1,DIFF_MAX); o.diffClear=num(d.diffClear,0,1023);
   o.rev=num(d.rev,0,1e9); o.lineage=(d.lineage||[]).slice(-7).concat([d.id]);
   // 端末ごとの設定（音・影・感度）はそのまま
   o.sound=save.sound; o.shadows=save.shadows; o.sens=save.sens;
@@ -1463,7 +1527,7 @@ async function transferAction(){
 /* =========================================================
    オンライン（PeerJS）— 部屋
 ========================================================= */
-const NET={mode:'off',peer:null,host:null,code:'',players:[],myIdx:0,ev:[],sendT:0,inT:0,inMatch:false,roomMode:'solo',hostSeen:0};
+const NET={mode:'off',peer:null,host:null,code:'',players:[],myIdx:0,ev:[],sendT:0,inT:0,inMatch:false,roomMode:'solo',roomDiff:3,hostSeen:0};
 const ROOM_PREFIX='brawlarena3d-v1-';
 function peerOpts(){
   const o={debug:0};
@@ -1550,7 +1614,7 @@ function broadcastRoom(){
   if(NET.mode!=='host') return;
   const live=NET.players.filter(p=>!p.gone);
   const list=live.map(p=>({name:p.name,hero:p.hero,lvl:p.lvl}));
-  live.forEach((p,i)=>{ if(p.conn){ try{ p.conn.send({t:'room',players:list,you:i,mode:save.mode,code:NET.code}); }catch(e){} } });
+  live.forEach((p,i)=>{ if(p.conn){ try{ p.conn.send({t:'room',players:list,you:i,mode:save.mode,diff:save.diff,code:NET.code}); }catch(e){} } });
   renderRoom();
 }
 function hostOnData(conn,d){
@@ -1579,7 +1643,7 @@ function clientOnData(d){
   if(!d||!d.t) return;
   NET.hostSeen=performance.now();
   switch(d.t){
-    case 'room': NET.mode='client'; NET.players=d.players; NET.myIdx=d.you; NET.roomMode=d.mode; NET.code=d.code; renderRoom(); renderLobby(); break;
+    case 'room': NET.mode='client'; NET.players=d.players; NET.myIdx=d.you; NET.roomMode=d.mode; NET.roomDiff=clamp(d.diff|0||3,1,DIFF_MAX); NET.code=d.code; renderRoom(); renderLobby(); break;
     case 'full': roomMsg(d.busy?'いまバトル中だよ。終わってからもう一度入ってね':'部屋が満員でした（最大3人）'); leaveRoom(true); break;
     case 'bye': if(G.state!=='lobby'){ toast('ホストが部屋をとじました'); exitMatchToLobby(); } leaveRoom(true); openRoom(); roomMsg('ホストが部屋をとじました'); break;
     case 'start': $('room-modal').classList.remove('on'); startMatch(d.setup, NET.myIdx); break;
@@ -2034,7 +2098,11 @@ class Brawler{
     this.ammo=3; this.ult=0; this.dead=false; this.atkCd=0; this.animAtk=0; this.lastHurt=-10; this.lastAct=-10; this.lastShot=-10;
     this.invuln=0; this.history=[]; this.histT=0; this.flash=0; this.move=0; this.radius=0.6; this.slowT=0; this.wasReady=false; this.ultLock=0; this.dustT=0;
     this.stats={kills:0,deaths:0,cubes:0,dmg:0}; this.cubes=0; this.baseDmg=this.dmg; this.rank=0;
+    this.D=c.human<0?diffParams(G.diff||3):null; this.spdMul=1;
+    if(this.D){ this.maxHp=Math.round(this.maxHp*this.D.hp); this.hp=this.maxHp; this.dmg=Math.round(this.dmg*this.D.dmg); this.spdMul=this.D.speed; }
+    this.baseDmg=this.dmg;
     this.ai={brave:rand(5.5,9.5),t:0,goal:null,strafe:1,atkWait:rand(0.5,1.2),detour:0,detourT:0,stuck:0,ultWait:rand(0.5,2)};
+    if(this.D){ this.ai.brave*=this.D.brave; this.ai.ultWait*=this.D.ultWait; }
     const el=document.createElement('div'); el.className='lbl '+(this.isPlayer?'me':(ally?'t0':'t1'))+(this.isHuman&&!this.isPlayer?' hu':'');
     el.innerHTML=`<div class="gm" style="display:none"><i class="fa-solid fa-bolt"></i><span></span></div><div class="nm">${this.isHuman&&!this.isPlayer?'★':''}${esc(this.name)}</div><div class="hpb"><i></i><span></span></div>${this.isPlayer?'<div class="am"><i><b></b></i><i><b></b></i><i><b></b></i></div>':''}`;
     $('labels').appendChild(el); this.el=el; this.elHp=el.querySelector('.hpb i'); this.elHpN=el.querySelector('.hpb span'); this.elGm=el.querySelector('.gm'); this.elGmN=el.querySelector('.gm span');
@@ -2156,7 +2224,7 @@ class Brawler{
     }
     let mv = this.isPlayer ? (G.menuOpen?new V3():playerMove()) : this.think(dt);
     const len=mv.length(); if(len>1) mv.multiplyScalar(1/len);
-    const spd=this.hero.speed*(this.slowT>0?0.55:1);
+    const spd=this.hero.speed*this.spdMul*(this.slowT>0?0.55:1);
     this.pos.addScaledVector(mv,spd*dt);
     if(this.kb.lengthSq()>0.01){ this.pos.addScaledVector(this.kb,dt); this.kb.multiplyScalar(Math.pow(0.004,dt)); }
     collideCircle(this.pos,this.radius);
@@ -2211,14 +2279,14 @@ class Brawler{
     if(this.move>0.5){ this.dustT-=dt; if(this.dustT<=0){ this.dustT=0.09; emit(this.pos.clone().add(new V3(rand(-.2,.2),0.15,rand(-.2,.2))),{color:0xd6b98a,size:0.45,size1:0.9,op:0.5,life:0.45,vel:new V3(-this.vel.x*0.08,0.4,-this.vel.z*0.08)}); } }
   }
   think(dt){
-    const ai=this.ai; ai.t-=dt; ai.atkWait-=dt; ai.detourT-=dt; ai.ultWait-=dt;
+    const ai=this.ai, D=this.D||diffParams(7); ai.t-=dt; ai.atkWait-=dt; ai.detourT-=dt; ai.ultWait-=dt;
     let target=null, td=1e9;
     for(const e of G.brawlers){ if(e.team===this.team||e.dead) continue; const d=d2(e.pos,this.pos); if(d<td){ td=d; target=e; } }
     const Z=G.zone, hpR=this.hp/this.maxHp;
     const inZone=p=>d2(p,Z.c)<Z.r-2;
     const intoZone=p=>{ const v=p.clone().sub(Z.c).setY(0); const lim=Math.max(0,Z.r-3.5); if(v.length()>lim) v.setLength(lim*0.85); return Z.c.clone().add(v); };
     if(ai.t<=0){
-      ai.t=rand(0.3,0.6); if(Math.random()<0.3) ai.strafe*=-1; ai.crate=null;
+      ai.t=rand(0.3,0.6)*D.think; if(Math.random()<0.3) ai.strafe*=-1; ai.crate=null;
       let goal=null;
       let leader=null; for(const b of G.brawlers){ if(b!==this&&b.team===this.team&&b.isHuman&&!b.dead){ leader=b; break; } }
       let cube=null, cd=1e9; if(hpR<0.9) for(const c of G.cubes){ const d=d2(c.pos,this.pos); if(d<cd&&inZone(c.pos)){ cd=d; cube=c; } }
@@ -2240,10 +2308,10 @@ class Brawler{
       ai.goal=goal; ai.wp=null;
     }
     if(target && td<Math.min(this.hero.range*0.95,ai.brave+3) && ai.atkWait<=0 && this.ammo>=1 && hasLOS(this.pos,target.pos)){
-      const lead=target.pos.clone().addScaledVector(target.vel,Math.min(0.6,td/18));
-      const dir=lead.sub(this.pos).setY(0).normalize(); const e=rand(-0.17,0.17), c=Math.cos(e), s=Math.sin(e);
+      const lead=target.pos.clone().addScaledVector(target.vel,Math.min(0.6,td/18)*D.lead);
+      const dir=lead.sub(this.pos).setY(0).normalize(); const e=rand(-D.aim,D.aim), c=Math.cos(e), s=Math.sin(e);
       this.attack(new V3(dir.x*c+dir.z*s,0,-dir.x*s+dir.z*c));
-      ai.atkWait=rand(0.6,1.25)*(this.ammo<1.5?1.7:1);
+      ai.atkWait=rand(0.6,1.25)*(this.ammo<1.5?1.7:1)*D.atkGap;
     } else if(ai.crate && !ai.crate.dead && ai.atkWait<=0 && this.ammo>=1.5 && d2(ai.crate.pos,this.pos)<this.hero.range*0.85 && firstBlock(this.pos,ai.crate.pos)===ai.crate.col){
       this.attack(ai.crate.pos.clone().sub(this.pos)); ai.atkWait=rand(0.35,0.7);
     }
@@ -2252,7 +2320,7 @@ class Brawler{
       const id=this.hero.id;
       const los=()=>hasLOS(this.pos,target.pos);
       if((id==='chronos'&&(hpR<0.4||td<3.5)) || (id==='tesla'&&td<12&&los()) || (id==='lumina'&&td<10)
-        || (id==='samurai'&&td<9.5&&los()) || (id==='brave'&&td<8.5) || (id==='golem'&&td<4.2) || (id==='necro'&&td<11)) { this.useUlt(dir,target.pos.clone()); ai.ultWait=rand(1,2.5); }
+        || (id==='samurai'&&td<9.5&&los()) || (id==='brave'&&td<8.5) || (id==='golem'&&td<4.2) || (id==='necro'&&td<11)) { this.useUlt(dir,target.pos.clone()); ai.ultWait=rand(1,2.5)*D.ultWait; }
     }
     if(!ai.goal) return new V3();
     if(d2(this.pos,ai.goal)<0.7) return new V3();
@@ -2899,9 +2967,9 @@ function bindInput(){
 function buildSetup(mode,humans){
   const used=new Set(humans.map(h=>h.name));
   const names=BOT_NAMES.filter(n=>!used.has(n)).sort(()=>Math.random()-0.5);
-  const avg=Math.round(humans.reduce((s,h)=>s+h.lvl,0)/humans.length);
-  const botLv=clamp(Math.max(1+Math.floor(save.trophies/40),avg),1,MAX_LV);
-  const bl=()=>clamp(botLv+Math.round(rand(-1,1)),1,MAX_LV);
+  const L=save.diff, D=diffParams(L);
+  // レベル1は全員パワー1、レベル10は全員MAX。そのあいだは少しだけばらつく
+  const bl=()=>L<=1?1:L>=DIFF_MAX?MAX_LV:clamp(D.lv+(Math.random()<0.35?pick([-1,1]):0),1,MAX_LV);
   const list=[]; const add=(hero,name,team,lvl,x,z,human)=>list.push({hero,name,team,lvl,x:r2(x),z:r2(z),human});
   const RX=BOUND_X-3.5, RZ=BOUND_Z-3.5;
   if(mode==='trio'){
@@ -2915,7 +2983,7 @@ function buildSetup(mode,humans){
       if(slots[i]!=null){ const h=humans[slots[i]]; add(h.hero,h.name,i,h.lvl,x,z,slots[i]); }
       else add(pick(HERO_IDS),names.pop()||'CPU',i,bl(),x,z,-1); }
   }
-  return {mode,zx:r2(rand(-4,4)),zz:r2(rand(-4,4)),list};
+  return {mode,diff:L,zx:r2(rand(-4,4)),zz:r2(rand(-4,4)),list};
 }
 function ensureRenderer(){
   if(G.renderer) return;
@@ -2929,7 +2997,7 @@ function startMatch(setup,myHuman){
   G.renderer.setSize(VW(),VH());
   document.querySelectorAll('.modal').forEach(m=>m.classList.remove('on')); $('upd-bar').classList.remove('on');
   $('lobby').classList.remove('active'); $('game-screen').classList.add('active');
-  G.isClient=NET.mode==='client'; G.mode=setup.mode; NET.inMatch=NET.mode!=='off'; NET.ev=[]; NET.sendT=0; NET.inT=0;
+  G.isClient=NET.mode==='client'; G.mode=setup.mode; G.diff=clamp(setup.diff|0||3,1,DIFF_MAX); NET.inMatch=NET.mode!=='off'; NET.ev=[]; NET.sendT=0; NET.inT=0;
   buildWorld(); onResize();
   const me=setup.list.find(e=>e.human===myHuman)||setup.list[0]; G.myTeam=me.team;
   G.brawlers=[]; G.nid=1;
@@ -2961,6 +3029,7 @@ function startMatch(setup,myHuman){
   else { $('vs-blue').innerHTML=card(G.player,false); $('vs-red').innerHTML=G.brawlers.filter(b=>!b.isPlayer).map(b=>card(b,true)).join(''); }
   $('vs').className='overlay on'+(G.mode==='trio'?' trio':'');
   $('vs-mode').innerHTML=(G.mode==='trio'?'<i class="fa-solid fa-users"></i> トリオ・サバイバル ─ チームで生き残れ！':'<i class="fa-solid fa-skull"></i> ソロ・サバイバル ─ 最後の1人をめざせ！')+(NET.mode!=='off'?'　<i class="fa-solid fa-globe"></i> オンライン':'');
+  $('vs-mode').innerHTML+=`<div style="margin-top:6px;font-size:13px"><span style="background:${diffColor(G.diff)};padding:3px 12px;border-radius:999px">敵のつよさ Lv.${G.diff} ${DIFF_NAMES[G.diff]}</span></div>`;
   G.state='pre'; G.preT=2.6; SFX.play('ready');
   requestLock();
 }
@@ -2992,7 +3061,11 @@ function showResult(){
   $('res-body').innerHTML=list.map(b=>`<tr class="${b.isPlayer?'me':''} ${b.team===G.myTeam?'ally':''} ${b.dead?'out':''}"><td class="rk">${b.rank?b.rank+'位':'<small>生存</small>'}</td><td><img src="${THUMBS[b.hero.id]}"></td><td class="nmc">${b.rank===1?'<i class="fa-solid fa-crown mvp"></i> ':''}${b.isHuman?'★':''}${esc(b.name)}<br><small style="color:#94a3b8">${b.hero.name}${trio?' ・チーム'+(b.team+1):''}</small></td><td>${b.stats.kills}</td><td>${b.stats.cubes}</td><td>${b.stats.dmg.toLocaleString()}</td></tr>`).join('');
   const st=p.stats;
   const TR=trio?[10,5,0,-3]:[10,8,6,4,2,0,-1,-2,-3,-4], CO=trio?[60,40,25,15]:[60,50,42,35,28,22,18,15,12,10];
-  const tr=TR[r-1]||0, co=(CO[r-1]||10)+st.kills*5+st.cubes*2, ex=Math.max(10,40-(r-1)*(trio?8:3));
+  const RW=diffParams(G.diff||3).reward, tr0=TR[r-1]||0;
+  const tr=tr0>0?Math.max(1,Math.round(tr0*RW)):tr0;     // 勝ったときだけレベルで増減（負けのマイナスは同じ）
+  const co=Math.round(((CO[r-1]||10)+st.kills*5+st.cubes*2)*RW), ex=Math.max(10,40-(r-1)*(trio?8:3));
+  const firstClear = r===1 && !((save.diffClear>>(G.diff-1))&1);
+  if(r===1) save.diffClear|=1<<(G.diff-1);
   const oldTr=save.trophies;
   save.trophies=Math.max(0,save.trophies+tr); save.best=Math.max(save.best,save.trophies); save.coins+=co; save.exp+=ex;
   save.stats.games++; if(r===1) save.stats.wins++; if(r<=top) save.stats.top3++; save.stats.bestRank=save.stats.bestRank?Math.min(save.stats.bestRank,r):r;
@@ -3003,6 +3076,8 @@ function showResult(){
   save.rev++; persist();
   const realTr=save.trophies-oldTr;
   $('res-rew').innerHTML=`<div class="rew"><span class="ic tr"><i class="fa-solid fa-trophy"></i></span>${realTr>=0?'+':''}${realTr}</div><div class="rew"><span class="ic co"><i class="fa-solid fa-coins"></i></span>+${co}</div><div class="rew"><span class="ic" style="background:linear-gradient(180deg,#60a5fa,#7c3aed)">EX</span>+${ex}</div>`;
+  $('res-rew').innerHTML+=`<div class="rew"><span class="ic" style="background:${diffColor(G.diff)}">Lv${G.diff}</span>×${RW.toFixed(1)}</div>`;
+  if(firstClear) $('res-sub').textContent+=`　★ Lv.${G.diff} はじめての1位！`;
   $('res-btn').textContent=NET.mode==='off'?'ロビーへもどる':'部屋にもどる';
   $('result').classList.add('on');
 }
