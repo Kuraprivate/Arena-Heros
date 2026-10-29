@@ -269,7 +269,14 @@ kbd{display:inline-block;background:#f1f5f9;border:1px solid #cbd5e1;border-bott
 .hud-bl .h{width:150px;height:12px;background:#111;border-radius:6px;overflow:hidden;margin-top:4px}
 .hud-bl .h i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#4ade80)}
 .hud-bl .hn{font-family:Orbitron;color:#cbd5e1;font-size:10px;margin-top:2px}
-#team-hud{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+#minimap{position:absolute;left:12px;top:12px;width:150px;height:auto;border-radius:12px;border:2px solid rgba(255,255,255,.75);box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:none;image-rendering:auto}
+body.touch #minimap{left:auto;right:8px;top:58px;width:104px}
+body.touch #killfeed{top:178px}
+#area-tag{position:absolute;top:62px;left:50%;transform:translateX(-50%);color:#fff;font-weight:900;font-size:18px;padding:6px 18px;border-radius:999px;background:rgba(15,23,42,.55);pointer-events:none;opacity:0;white-space:nowrap;text-shadow:0 2px 4px rgba(0,0,0,.4)}
+#area-tag.on{animation:areaIn 2.6s ease both}
+@keyframes areaIn{0%{opacity:0;transform:translate(-50%,-8px)}12%{opacity:1;transform:translate(-50%,0)}75%{opacity:1}100%{opacity:0}}
+body.touch #area-tag{top:96px;font-size:14px}
+#team-hud{position:absolute;left:12px;top:182px;display:flex;flex-direction:column;gap:5px;pointer-events:none}
 .tm{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.7);border-radius:10px;padding:3px 8px 3px 3px;color:#fff;font-size:11px;font-weight:900}
 .tm img{width:26px;height:26px;border-radius:7px;background:#e0e7ff}
 .tm .b{width:60px;height:6px;background:#111;border-radius:3px;overflow:hidden}.tm .b i{display:block;height:100%;background:#60a5fa}
@@ -312,6 +319,11 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
 #vs{background:linear-gradient(180deg,rgba(21,128,61,.94),rgba(15,23,42,.94))}
 #vs.trio{background:linear-gradient(180deg,rgba(29,78,216,.94),rgba(15,23,42,.94))}
 .vs-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:94vw}
+#vs-red{gap:5px;max-width:min(94vw,640px)}
+.vs-mini{width:40px;height:40px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.15);border:2px solid rgba(248,113,113,.8);animation:slideR .5s cubic-bezier(.2,1.3,.5,1) both}
+.vs-mini.hu{border-color:#facc15}
+.vs-mini img{width:100%;height:100%;object-fit:cover}
+.vs-cnt{width:100%;text-align:center;color:#fecaca;font-weight:900;font-size:13px;margin-top:2px}
 .vs-c{width:118px;text-align:center;color:#fff;font-weight:900;animation:slideL .5s cubic-bezier(.2,1.3,.5,1) both}
 #vs-red .vs-c{animation-name:slideR}
 .vs-c img{width:118px;height:118px;border-radius:20px;background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.8)}
@@ -319,6 +331,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
 .vs-c small{display:block;font-size:11px;opacity:.85}
 .vs-c.sm{width:70px;font-size:11px}.vs-c.sm img{width:70px;height:70px;border-radius:14px}
 .vs-c.sm.enemy img{border-color:#fca5a5}
+@media (max-height:560px){ .vs-mid{font-size:40px!important;margin:4px 0!important} .vs-c{width:78px;font-size:11px} .vs-c img{width:78px;height:78px;border-radius:14px} .vs-mini{width:32px;height:32px;border-radius:8px} #vs-red{gap:4px} }
 @keyframes slideL{from{transform:translateX(-120vw)}}
 @keyframes slideR{from{transform:translateX(120vw)}}
 .vs-mid{font-family:Orbitron;font-weight:900;font-size:64px;color:#fde047;-webkit-text-stroke:3px #000;margin:14px 0;animation:pop .5s .4s both}
@@ -334,6 +347,8 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
 .res-title.win{background:linear-gradient(180deg,#fde047,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #b45309)}
 .res-title.lose{color:#64748b}.res-title.draw{color:#7c3aed}
 .res-sub{font-weight:900;color:var(--sub);margin:6px 0 12px}
+.res-scroll{max-height:38vh;overflow-y:auto;border-radius:12px;border:1px solid var(--line)}
+.res-scroll thead th{position:sticky;top:0;background:#fff;z-index:1}
 .res-tbl{width:100%;border-collapse:collapse;font-size:12px;font-weight:700}
 .res-tbl td,.res-tbl th{padding:5px 4px;border-bottom:1px solid var(--line)}
 .res-tbl th{color:var(--sub);font-size:11px}
@@ -490,7 +505,9 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <div id="fx-layer"></div>
   <div id="vignette"></div>
   <div id="flash"></div>
-  <div class="hud-top">
+  <canvas id="minimap" width="256" height="280"></canvas>
+    <div id="area-tag"></div>
+    <div class="hud-top">
     <div class="sc g" title="のこり"><i class="fa-solid fa-user" id="alive-ic"></i><span id="alive">10</span></div>
     <div class="timer" id="timer">--</div>
     <div class="sc r" title="倒した数"><i class="fa-solid fa-skull"></i><span id="kills">0</span></div>
@@ -525,7 +542,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
     <div class="res-card">
       <div class="res-title" id="res-title">VICTORY</div>
       <div class="res-sub" id="res-sub"></div>
-      <table class="res-tbl"><thead><tr><th>順位</th><th></th><th class="nmc">プレイヤー</th><th>倒した</th><th>回復</th><th>ダメージ</th></tr></thead><tbody id="res-body"></tbody></table>
+      <div class="res-scroll" id="res-scroll"><table class="res-tbl"><thead><tr><th>順位</th><th></th><th class="nmc">プレイヤー</th><th>倒した</th><th>回復</th><th>ダメージ</th></tr></thead><tbody id="res-body"></tbody></table></div>
       <div class="rew-row" id="res-rew"></div>
       <button class="btn or" style="width:100%;font-size:17px;padding:14px" id="res-btn">ロビーへもどる</button>
     </div>
@@ -537,7 +554,7 @@ body.touch .hint{bottom:auto;top:120px;white-space:normal;width:88%;text-align:c
   <h3><i class="fa-solid fa-circle-question" style="color:#7c3aed"></i> あそびかた</h3>
   <div class="help">
     <h4>ルール：サバイバル</h4>
-    <ul><li><b>ソロ</b>：10人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×4チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>バトルで<b>トップ3</b>に入ると<b>ジェム</b>がもらえる！ 1位 3個・2位 2個・3位 1個。ジェムでボックスを開けよう。</li><li>ホームの「<b>敵のつよさ</b>」でCPUの強さをレベル1〜10からえらべるよ。強いレベルほどトロフィーとコインが多くもらえる！</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
+    <ul><li><b>ソロ</b>：30人で戦って、最後の1人まで生き残ったら1位！</li><li><b>トリオ</b>：3人チーム×10チーム。最後まで生き残ったチームの勝ち！</li><li>時間がたつと<b>安全地帯</b>（明るい円）がせまくなる。外の<b>毒ガス</b>の中にいるとダメージを受けるよ！</li><li>バトルで<b>トップ3</b>に入ると<b>ジェム</b>がもらえる！ 1位 3個・2位 2個・3位 1個。ジェムでボックスを開けよう。</li><li>ホームの「<b>敵のつよさ</b>」でCPUの強さをレベル1〜10からえらべるよ。強いレベルほどトロフィーとコインが多くもらえる！</li><li>ステージは<b>森・氷河期・王国・炎</b>の4つのエリアに分かれているよ。左上（スマホは右上）の<b>ミニマップ</b>で毒ガスと味方の場所をチェック！ 点線は次に毒ガスがせまってくるところ。</li><li>炎のエリアの<b>溶岩</b>と森の<b>池</b>は歩いて入れないけど、攻撃は飛びこえるよ。</li><li>最初の3人のほかのキャラは、<b>ボックス</b>（ジェムで開ける）から出てくるよ！</li><li>敵をたおすと<b>回復ハート</b>が出てくる。拾うと体力が回復するよ（体力が満タンのときは拾わない）！</li><li>攻撃は壁を通りぬけないよ。かくれて身を守ろう。</li></ul>
     <h4>オンライン（みんなで遊ぶ）</h4>
     <ul><li>「部屋をつくる」と5けたの<b>部屋コード</b>が出るよ。友だちに教えてあげよう。</li><li>友だちは「部屋に入る」でコードを入れると参加できる（最大3人）。</li><li>部屋をつくった人がモード（ソロ／トリオ）を選んでスタート！</li></ul>
     <h4>パソコン</h4>
@@ -1247,8 +1264,8 @@ function stageLoop(dt){
    ロビーUI
 ========================================================= */
 const MODES={
-  solo:{small:'イベント・ソロ 10人',name:'サバイバル（ソロ）',desc:'最後の1人まで生き残れ！ 毒ガスがだんだんせまってくるぞ',cls:''},
-  trio:{small:'イベント・トリオ 3人×4チーム',name:'サバイバル（トリオ）',desc:'3人チームで協力！ 最後まで生き残ったチームの勝ち',cls:'trio'}
+  solo:{small:'イベント・ソロ 30人',name:'サバイバル（ソロ）',desc:'最後の1人まで生き残れ！ 毒ガスがだんだんせまってくるぞ',cls:''},
+  trio:{small:'イベント・トリオ 3人×10チーム',name:'サバイバル（トリオ）',desc:'3人チームで協力！ 最後まで生き残ったチームの勝ち',cls:'trio'}
 };
 function renderLobby(){
   $('h-tr').textContent=save.trophies; $('h-co').textContent=save.coins; $('h-ge').textContent=save.gems;
@@ -1684,19 +1701,34 @@ setInterval(()=>{
 ========================================================= */
 const G = { state:'lobby', renderer:null, scene:null, camera:null, t:0, brawlers:[], projs:[], fx:[], minions:[], crates:[], colliders:[], texts:[],
   player:null, cubes:[], zone:null, shake:0, paused:false, menuOpen:false, slow:1, camT:new V3(), isClient:false, myTeam:0, mode:'solo', nid:1, flash:0 };
-const MAP_W=56, MAP_D=64, BOUND_X=MAP_W/2-0.7, BOUND_Z=MAP_D/2-0.7;
+const MAP_W=128, MAP_D=140, BOUND_X=MAP_W/2-0.7, BOUND_Z=MAP_D/2-0.7;   // 前の約5倍の広さ
 const INPUT={keys:{}, mouse:new THREE.Vector2(), aimPoint:new V3(0,0,-5), firing:false, ultAim:false, joy:{active:false,x:0,y:0,id:null}};
 const raycaster=new THREE.Raycaster(); const floorPlane=new THREE.Plane(new V3(0,1,0),0);
 function ev(...a){ if(NET.mode==='host'&&NET.inMatch) NET.ev.push(a); }
 
-/* ---------- コリジョン ---------- */
-function addCollider(cx,cz,w,d,crate){ const c={minX:cx-w/2,maxX:cx+w/2,minZ:cz-d/2,maxZ:cz+d/2,crate:crate||null,dead:false}; G.colliders.push(c); return c; }
-function pointInWall(x,z,pad=0){
-  for(const c of G.colliders){ if(c.dead) continue; if(x>c.minX-pad&&x<c.maxX+pad&&z>c.minZ-pad&&z<c.maxZ+pad) return c; }
+/* ---------- コリジョン（格子で分けて、近くの壁だけ調べる） ---------- */
+const CG=4, CGW=Math.ceil((MAP_W+12)/CG), CGD=Math.ceil((MAP_D+12)/CG);
+let COLGRID=Array.from({length:CGW*CGD},()=>[]);
+function cgI(x){ return Math.floor((x+MAP_W/2+6)/CG); }
+function cgJ(z){ return Math.floor((z+MAP_D/2+6)/CG); }
+function cgCell(x,z){ const i=cgI(x), j=cgJ(z); if(i<0||j<0||i>=CGW||j>=CGD) return null; return COLGRID[j*CGW+i]; }
+// low=true は「歩けないけど弾は飛び越える」もの（溶岩・池）
+function addCollider(cx,cz,w,d,crate,low){
+  const c={minX:cx-w/2,maxX:cx+w/2,minZ:cz-d/2,maxZ:cz+d/2,crate:crate||null,dead:false,low:!!low}; G.colliders.push(c);
+  const m=1.3;
+  for(let j=Math.max(0,cgJ(c.minZ-m));j<=Math.min(CGD-1,cgJ(c.maxZ+m));j++)
+    for(let i=Math.max(0,cgI(c.minX-m));i<=Math.min(CGW-1,cgI(c.maxX+m));i++) COLGRID[j*CGW+i].push(c);
+  return c;
+}
+function pointInWall(x,z,pad=0,solidOnly){
+  const L=cgCell(x,z); if(!L) return null;
+  for(const c of L){ if(c.dead||(solidOnly&&c.low)) continue; if(x>c.minX-pad&&x<c.maxX+pad&&z>c.minZ-pad&&z<c.maxZ+pad) return c; }
   return null;
 }
+const pointInSolid=(x,z,pad=0)=>pointInWall(x,z,pad,true);
 function collideCircle(p,r){
-  for(const c of G.colliders){
+  const L=cgCell(p.x,p.z);
+  if(L) for(const c of L){
     if(c.dead) continue;
     const cx=clamp(p.x,c.minX,c.maxX), cz=clamp(p.z,c.minZ,c.maxZ);
     const dx=p.x-cx, dz=p.z-cz, dd=dx*dx+dz*dz;
@@ -1711,21 +1743,22 @@ function collideCircle(p,r){
 }
 function hasLOS(a,b){
   const dist=d2(a,b), n=Math.ceil(dist/0.5);
-  for(let i=1;i<n;i++){ const t=i/n; if(pointInWall(a.x+(b.x-a.x)*t, a.z+(b.z-a.z)*t)) return false; }
+  for(let i=1;i<n;i++){ const t=i/n; if(pointInSolid(a.x+(b.x-a.x)*t, a.z+(b.z-a.z)*t)) return false; }
   return true;
 }
-function firstBlock(a,b){
+// move=true なら溶岩や池も「ふさがっている」とみなす（歩く道の確認用）
+function firstBlock(a,b,move){
   const dist=d2(a,b), n=Math.ceil(dist/0.4);
-  for(let i=1;i<n;i++){ const t=i/n; const c=pointInWall(a.x+(b.x-a.x)*t, a.z+(b.z-a.z)*t, 0.3); if(c) return c; }
+  for(let i=1;i<n;i++){ const t=i/n; const c=pointInWall(a.x+(b.x-a.x)*t, a.z+(b.z-a.z)*t, move?0.5:0.3, !move); if(c) return c; }
   return null;
 }
 function routeTo(pos,goal){
-  const c=firstBlock(pos,goal); if(!c) return goal;
+  const c=firstBlock(pos,goal,true); if(!c) return goal;
   const m=1.15; let best=null, bs=1e9;
   for(const [x,z] of [[c.minX-m,c.minZ-m],[c.maxX+m,c.minZ-m],[c.minX-m,c.maxZ+m],[c.maxX+m,c.maxZ+m]]){
     if(Math.abs(x)>BOUND_X||Math.abs(z)>BOUND_Z) continue;
     const v=new V3(x,0,z); if(d2(pos,v)<0.5) continue;
-    const sc=d2(pos,v)+d2(v,goal)+(firstBlock(pos,v)?25:0); if(sc<bs){ bs=sc; best=v; }
+    const sc=d2(pos,v)+d2(v,goal)+(firstBlock(pos,v,true)?25:0); if(sc<bs){ bs=sc; best=v; }
   }
   return best||goal;
 }
@@ -1736,6 +1769,70 @@ function steer(pos,dir,ai){
     if(!pointInWall(pos.x+x*1.2,pos.z+z*1.2,0.45) && Math.abs(pos.x+x)<BOUND_X+0.5 && Math.abs(pos.z+z)<BOUND_Z+0.5) return new V3(x,0,z); }
   return dir.clone().negate();
 }
+
+/* ---------- 道さがし（A*）：広いマップでCPUが建物を回りこめるように ---------- */
+const NC=1.25, NW=Math.ceil(MAP_W/NC), ND=Math.ceil(MAP_D/NC);
+let NAV=null, NAVR=null;   // NAV:1=通れない, NAVR:1=中央からたどり着ける
+const navX=i=>-MAP_W/2+(i+0.5)*NC, navZ=j=>-MAP_D/2+(j+0.5)*NC;
+const navI=x=>clamp(Math.floor((x+MAP_W/2)/NC),0,NW-1), navJ=z=>clamp(Math.floor((z+MAP_D/2)/NC),0,ND-1);
+function buildNav(){
+  NAV=new Uint8Array(NW*ND);
+  for(let j=0;j<ND;j++) for(let i=0;i<NW;i++){ const x=navX(i), z=navZ(j);
+    NAV[j*NW+i]=(Math.abs(x)>BOUND_X-0.4||Math.abs(z)>BOUND_Z-0.4||pointInWall(x,z,0.72))?1:0; }
+  // 中央からたどり着けるところだけを「歩ける」とする（とじこめられた場所に出ないように）
+  NAVR=new Uint8Array(NW*ND); const st=nearFree(navI(0),navJ(0),NAV); const q=[st]; NAVR[st]=1;
+  while(q.length){ const k=q.pop(), i=k%NW, j=(k/NW)|0;
+    for(const [di,dj] of [[1,0],[-1,0],[0,1],[0,-1]]){ const a=i+di, b=j+dj; if(a<0||b<0||a>=NW||b>=ND) continue; const n=b*NW+a; if(!NAV[n]&&!NAVR[n]){ NAVR[n]=1; q.push(n); } } }
+}
+function nearFree(i,j,grid){
+  grid=grid||NAVR; const ok=k=>grid===NAV?!NAV[k]:NAVR[k];
+  if(ok(j*NW+i)) return j*NW+i;
+  for(let r=1;r<14;r++) for(let dj=-r;dj<=r;dj++) for(let di=-r;di<=r;di++){
+    if(Math.abs(di)!==r&&Math.abs(dj)!==r) continue; const a=i+di, b=j+dj; if(a<0||b<0||a>=NW||b>=ND) continue; const k=b*NW+a; if(ok(k)) return k; }
+  return j*NW+i;
+}
+const navPos=k=>new V3(navX(k%NW),0,navZ((k/NW)|0));
+function walkClear(a,b){ const dist=d2(a,b), n=Math.ceil(dist/0.5); for(let i=1;i<n;i++){ const t=i/n; if(pointInWall(a.x+(b.x-a.x)*t,a.z+(b.z-a.z)*t,0.55)) return false; } return true; }
+let _hg=null, _hc=null, _hstamp=null, _hcl=null, _stamp=0;
+function findPath(from,to){
+  if(!NAV) return null;
+  const N=NW*ND; if(!_hg){ _hg=new Float32Array(N); _hc=new Int32Array(N); _hstamp=new Uint32Array(N); _hcl=new Uint32Array(N); }
+  _stamp++;
+  const s=nearFree(navI(from.x),navJ(from.z)), g=nearFree(navI(to.x),navJ(to.z)); if(s===g) return [to.clone()];
+  const gi=g%NW, gj=(g/NW)|0, H=k=>{ const dx=Math.abs(k%NW-gi), dz=Math.abs(((k/NW)|0)-gj); return (dx+dz)+(1.414-2)*Math.min(dx,dz); };
+  const heap=[], hk=[]; const push=(k,f)=>{ heap.push(f); hk.push(k); let i=heap.length-1; while(i>0){ const p=(i-1)>>1; if(heap[p]<=heap[i]) break; [heap[p],heap[i]]=[heap[i],heap[p]]; [hk[p],hk[i]]=[hk[i],hk[p]]; i=p; } };
+  const pop=()=>{ const k=hk[0]; const lf=heap.pop(), lk=hk.pop(); if(heap.length){ heap[0]=lf; hk[0]=lk; let i=0; for(;;){ const l=2*i+1, r=l+1; let m=i; if(l<heap.length&&heap[l]<heap[m]) m=l; if(r<heap.length&&heap[r]<heap[m]) m=r; if(m===i) break; [heap[m],heap[i]]=[heap[i],heap[m]]; [hk[m],hk[i]]=[hk[i],hk[m]]; i=m; } } return k; };
+  _hstamp[s]=_stamp; _hg[s]=0; _hc[s]=-1; push(s,H(s));
+  let it=0, found=false;
+  while(heap.length&&it++<7000){
+    const k=pop(); if(k===g){ found=true; break; } if(_hcl[k]===_stamp) continue; _hcl[k]=_stamp;
+    const i=k%NW, j=(k/NW)|0;
+    for(let dj=-1;dj<=1;dj++) for(let di=-1;di<=1;di++){
+      if(!di&&!dj) continue; const a=i+di, b=j+dj; if(a<0||b<0||a>=NW||b>=ND) continue;
+      const n=b*NW+a; if(!NAVR[n]||_hcl[n]===_stamp) continue;
+      if(di&&dj&&(!NAVR[j*NW+a]||!NAVR[b*NW+i])) continue;   // 角をすりぬけない
+      const ng=_hg[k]+(di&&dj?1.414:1);
+      if(_hstamp[n]!==_stamp||ng<_hg[n]){ _hstamp[n]=_stamp; _hg[n]=ng; _hc[n]=k; push(n,ng+H(n)); }
+    }
+  }
+  if(!found) return null;
+  const raw=[]; for(let k=g;k!==-1;k=_hc[k]) raw.push(k); raw.reverse();
+  // まっすぐ行けるところは点をとばして、なめらかな道にする
+  const pts=raw.map(navPos); pts[pts.length-1]=to.clone();
+  const out=[]; let cur=from.clone(), i=0;
+  while(i<pts.length-1){ let j=pts.length-1; while(j>i+1&&!walkClear(cur,pts[j])) j--; out.push(pts[j]); cur=pts[j]; i=j; }
+  if(!out.length) out.push(to.clone());
+  return out;
+}
+// 歩けるところにある、ランダムな点（出現場所や毒ガスの中心に使う）
+function randomFreeSpot(rng,cx=0,cz=0,spread=1e9){
+  rng=rng||Math.random;
+  for(let t=0;t<400;t++){ const x=cx+(rng()*2-1)*Math.min(spread,BOUND_X-3), z=cz+(rng()*2-1)*Math.min(spread,BOUND_Z-3);
+    if(Math.abs(x)>BOUND_X-3||Math.abs(z)>BOUND_Z-3) continue; const k=navJ(z)*NW+navI(x); if(NAVR[k]&&!pointInWall(x,z,1.0)) return new V3(x,0,z); }
+  return navPos(nearFree(navI(cx),navJ(cz)));
+}
+// 近くの歩ける点
+function freeNear(x,z){ if(!pointInWall(x,z,0.9)&&Math.abs(x)<BOUND_X-1&&Math.abs(z)<BOUND_Z-1&&NAVR[navJ(z)*NW+navI(x)]) return new V3(x,0,z); return navPos(nearFree(navI(x),navJ(z))); }
 
 /* ---------- パーティクル ---------- */
 const PART={pool:[],active:[]};
@@ -1912,58 +2009,407 @@ function wallTex(){
   return new THREE.CanvasTexture(c);
 }
 
-/* ---------- ワールド生成 ---------- */
-const WALLS=[[-24,-10,1.5,6],[-14,-29,6,1.5],[24,-22,1.5,5],[-26,-24,3,1.5],[-12,-8,6,1.5],[0,-12,8,1.5],[-6,-17,1.5,5],[6,-17,1.5,5],[-17,-14,4,1.5],[17,-2,1.5,6],[-7,-3,1.5,3]];
-const CRATES=[[-25,-2],[-24,-28],[-8,-29],[22,-29],[25,-15],[-21,-12],[13,-27],[-3,-8],[3,-8],[-15,-20],[15,-21],[-9,-13],[10,-14],[-19,-6],[0,-17],[13,-8],[-2.5,0],[-11,4],[-14,-24],[19,-25],[-20,-17],[8,-22],[-4,-24],[19,-11]];
+/* =========================================================
+   ワールド：4つのエリア（森・氷河期・王国・炎）
+   ・マップは決まった種(シード)から作るので、オンラインでも全員同じ地形になる
+   ・同じ見た目の部品はまとめて1つにして描く（たくさん置いても重くならないように）
+========================================================= */
+const BIOMES={
+  forest: {name:'森のエリア',    icon:'🌲',fog:0x86c79a,mini:'#4f9a4a',lowCol:'#4dabf7'},
+  ice:    {name:'氷河期のエリア',icon:'❄️',fog:0xc3dff2,mini:'#d6e9f5',lowCol:'#74c0fc'},
+  kingdom:{name:'王国のエリア',  icon:'🏰',fog:0x9fd3f2,mini:'#c9bfa3',lowCol:'#4dabf7'},
+  fire:   {name:'炎のエリア',    icon:'🌋',fog:0xc98a72,mini:'#5a4440',lowCol:'#ff7a1a'}
+};
+const biomeAt=(x,z)=>z<0?(x<0?'forest':'ice'):(x<0?'kingdom':'fire');
+const ROAD_W=7, PLAZA_R=10;
+function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+let LAYOUT=null;
+function genLayout(){
+  const R=mulberry(20261029), rr=(a,b)=>a+R()*(b-a), rp=a=>a[Math.floor(R()*a.length)];
+  const cols=[], items=[], deco=[], reserve=[];
+  const hit=(x,z,w,d,g,c)=>x+w/2+g>c.x-c.w/2&&x-w/2-g<c.x+c.w/2&&z+d/2+g>c.z-c.d/2&&z-d/2-g<c.z+c.d/2;
+  const free=(x,z,w,d,gap)=>{
+    if(Math.abs(x)<ROAD_W/2+w/2+1.4||Math.abs(z)<ROAD_W/2+d/2+1.4) return false;          // 道
+    if(Math.hypot(x,z)<PLAZA_R+Math.max(w,d)/2+2) return false;                            // 中央広場
+    if(Math.abs(x)+w/2>BOUND_X-2.6||Math.abs(z)+d/2>BOUND_Z-2.6) return false;             // 外周
+    for(const c of cols) if(hit(x,z,w,d,gap,c)) return false;
+    for(const c of reserve) if(hit(x,z,w,d,0.5,c)) return false;
+    return true; };
+  const freeDeco=(x,z,r)=>{ if(Math.abs(x)<ROAD_W/2+r||Math.abs(z)<ROAD_W/2+r||Math.hypot(x,z)<PLAZA_R+r) return false;
+    if(Math.abs(x)>BOUND_X-1||Math.abs(z)>BOUND_Z-1) return false;
+    for(const c of cols) if(hit(x,z,r*2,r*2,0.3,c)) return false; for(const c of reserve) if(hit(x,z,r*2,r*2,0,c)) return false; return true; };
+  const add=(k,x,z,o,cw,cd,low)=>{ items.push(Object.assign({k,x,z},o||{})); if(cw) cols.push({x,z,w:cw,d:cd,low:!!low}); };
+  // qx,qz：どの四分の一か（-1 / +1）。gen() が {k,w,d,gap,o,low} を返す
+  const scatter=(n,qx,qz,gen)=>{ let placed=0;
+    for(let t=0;t<n*60&&placed<n;t++){ const g=gen(); const x=qx*rr(5,BOUND_X-3), z=qz*rr(5,BOUND_Z-3);
+      if(!free(x,z,g.w,g.d,g.gap)) continue; add(g.k,x,z,Object.assign({w:g.w,d:g.d},g.o||{}),g.w,g.d,g.low); placed++; } };
+  const scatterDeco=(n,qx,qz,r,gen)=>{ let placed=0;
+    for(let t=0;t<n*20&&placed<n;t++){ const x=qx*rr(4,BOUND_X-1.5), z=qz*rr(4,BOUND_Z-1.5); if(!freeDeco(x,z,r)) continue; deco.push(Object.assign({x,z},gen())); placed++; } };
+
+  // ---- 中央広場 ----
+  add('fountain',0,0,{},3.6,3.6);
+
+  // ---- 王国（左下）：お城 ----
+  const CX=-36, CZ=40;
+  reserve.push({x:CX,z:CZ,w:33,d:33});
+  add('keep',CX,CZ,{},9,9);
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>{ add('ctower',CX+a*5.8,CZ+b*5.8,{},3.2,3.2); add('wtower',CX+a*14,CZ+b*14,{},3,3); });
+  [-1,1].forEach(s=>{ [-1,1].forEach(h=>{
+    add('cwall',CX+h*8.3,CZ+s*14,{w:11.4,d:1.6},11.4,1.6);   // 北と南の壁（まん中が門）
+    add('cwall',CX+s*14,CZ+h*8.3,{w:1.6,d:11.4},1.6,11.4);   // 西と東の壁
+  }); });
+  add('gate',CX,CZ-14,{ax:'x'}); add('gate',CX,CZ+14,{ax:'x'}); add('gate',CX-14,CZ,{ax:'z'}); add('gate',CX+14,CZ,{ax:'z'});
+
+  // ---- 森（左上） ----
+  add('gtree',-34,-40,{},4.4,4.4);
+  add('cabin',-52,-17,{w:7,d:5},7,5); add('cabin',-17,-55,{w:5,d:7},5,7); add('cabin',-50,-58,{w:7,d:5},7,5);
+  add('pond',-22,-25,{w:10,d:7},8.4,5.6,true);
+  scatter(3,-1,-1,()=>({k:'pond',w:rr(6,8),d:rr(4.5,6),gap:3.4,low:true}));
+  scatter(8,-1,-1,()=>{ const h=R()<0.5; return {k:'log',w:h?4.6:1.3,d:h?1.3:4.6,gap:3.2}; });
+  scatter(12,-1,-1,()=>{ const w=rr(2,3), d=rr(1.8,2.8); return {k:'rock',w,d,gap:3.2,o:{moss:1}}; });
+  scatter(56,-1,-1,()=>({k:'tree',w:1.3,d:1.3,gap:2.9,o:{v:R()<0.55?'pine':'oak',s:rr(0.95,1.3)}}));
+  scatterDeco(80,-1,-1,0.8,()=>({k:'bush',s:rr(0.7,1.2)}));
+  scatterDeco(35,-1,-1,0.5,()=>({k:'mush',s:rr(0.7,1.3)}));
+  scatterDeco(45,-1,-1,0.4,()=>({k:'flowers',c:rp(['y','p','w'])}));
+
+  // ---- 氷河期（右上） ----
+  add('glacier',44,-50,{w:14,d:9},14,9);
+  add('igloo',22,-22,{},4.4,4.4); add('igloo',54,-24,{},4.4,4.4); add('igloo',20,-57,{},4.4,4.4);
+  deco.push({k:'flake',x:33,z:-33,w:14,d:11});
+  reserve.push({x:33,z:-33,w:13,d:10});
+  scatter(11,1,-1,()=>{ const h=R()<0.5, L=rr(5.5,7.5); return {k:'icewall',w:h?L:1.5,d:h?1.5:L,gap:3.4}; });
+  scatter(18,1,-1,()=>({k:'crystal',w:2.2,d:2.2,gap:3.2,o:{s:rr(0.9,1.25)}}));
+  scatter(6,1,-1,()=>({k:'snowman',w:1.3,d:1.3,gap:3}));
+  scatter(30,1,-1,()=>({k:'spine',w:1.3,d:1.3,gap:2.9,o:{s:rr(0.95,1.3)}}));
+  scatterDeco(50,1,-1,0.9,()=>({k:'mound',s:rr(0.8,1.5)}));
+  scatterDeco(35,1,-1,0.4,()=>({k:'shard',s:rr(0.6,1.2)}));
+
+  // ---- 王国（左下）：町 ----
+  scatter(11,-1,1,()=>{ const h=R()<0.5; return {k:'house',w:h?5.4:4.4,d:h?4.4:5.4,gap:3.6,o:{roof:rp(['r','b','g'])}}; });
+  scatter(4,-1,1,()=>({k:'tower',w:3,d:3,gap:4}));
+  scatter(7,-1,1,()=>({k:'stall',w:3.2,d:2.2,gap:3.2,o:{c:Math.floor(R()*3)}}));
+  scatter(10,-1,1,()=>{ const h=R()<0.5, L=rr(5,7); return {k:'hedge',w:h?L:1.3,d:h?1.3:L,gap:3.2}; });
+  scatter(4,-1,1,()=>({k:'statue',w:1.8,d:1.8,gap:3.2}));
+  scatter(14,-1,1,()=>({k:'tree',w:1.3,d:1.3,gap:3,o:{v:'oak',s:rr(0.85,1.1)}}));
+  scatterDeco(28,-1,1,0.4,()=>({k:'lamp'}));
+  scatterDeco(22,-1,1,0.9,()=>({k:'fbed'}));
+  scatterDeco(18,-1,1,0.5,()=>({k:'barrel'}));
+
+  // ---- 炎（右下） ----
+  add('volcano',47,53,{},15,15);
+  add('lava',22,22,{w:9,d:5.5},7.6,4.6,true); add('lava',30,47,{w:6.5,d:9},5.4,7.6,true); add('lava',54,24,{w:9,d:5.5},7.6,4.6,true);
+  scatter(10,1,1,()=>{ const h=R()<0.5, L=rr(5,7); return {k:'ruin',w:h?L:1.5,d:h?1.5:L,gap:3.4}; });
+  scatter(5,1,1,()=>{ const w=rr(5,7.5), d=rr(3.6,5.5); return {k:'lava',w,d,gap:3.4,low:true,o:{}}; });
+  scatter(14,1,1,()=>{ const w=rr(2.4,3.2), d=rr(2,2.8); return {k:'vrock',w,d,gap:3.2}; });
+  scatter(16,1,1,()=>({k:'obsidian',w:1.7,d:1.7,gap:2.9,o:{s:rr(0.85,1.25)}}));
+  scatter(16,1,1,()=>({k:'deadtree',w:1.1,d:1.1,gap:2.9}));
+  scatterDeco(40,1,1,0.6,()=>({k:'vent'}));
+  scatterDeco(14,1,1,0.4,()=>({k:'bones'}));
+  scatterDeco(40,1,1,0.5,()=>({k:'pebble',s:rr(0.5,1)}));
+
+  // 溶岩と池は、コライダーよりひとまわり大きく見せる（見た目の w,d を使う）
+  items.forEach(it=>{ if((it.k==='lava'||it.k==='pond')&&it.w){ const c=cols.find(c=>c.x===it.x&&c.z===it.z); if(c&&c.w===it.w){ c.w*=0.84; c.d*=0.84; } } });
+
+  // ---- マップの外の景色 ----
+  const outside=[];
+  for(let i=0;i<260;i++){ const side=Math.floor(R()*4); let x,z;
+    if(side<2){ x=rr(-MAP_W/2-26,MAP_W/2+26); z=(side?1:-1)*(MAP_D/2+rr(3,26)); } else { z=rr(-MAP_D/2-26,MAP_D/2+26); x=(side===3?1:-1)*(MAP_W/2+rr(3,26)); }
+    if(Math.abs(x)<ROAD_W/2+2||Math.abs(z)<ROAD_W/2+2) continue;
+    outside.push({x,z,b:biomeAt(x,z),s:rr(0.9,1.6),r:R()}); }
+  return {cols,items,deco,outside};
+}
+function ensureMap(){
+  if(LAYOUT) return;
+  LAYOUT=genLayout();
+  G.colliders=[]; COLGRID=Array.from({length:CGW*CGD},()=>[]);
+  LAYOUT.cols.forEach(c=>addCollider(c.x,c.z,c.w,c.d,null,c.low));
+  buildNav();
+}
+
+/* ---------- 部品をまとめて描くしくみ ---------- */
+function makeBatcher(){
+  const groups=new Map(), M=new THREE.Matrix4(), Q=new THREE.Quaternion(), E=new THREE.Euler(), S=new THREE.Vector3(), P=new THREE.Vector3();
+  function push(key,mat,geo,m,shadow){ let g=groups.get(key); if(!g){ g={mat,list:[],shadow}; groups.set(key,g); } g.list.push({geo,m}); }
+  // 部品は大きさ1の形を、sx,sy,sz で大きくして置く
+  function put(geo,mat,x,y,z,sx,sy,sz,o){
+    o=o||{}; E.set(o.rx||0,o.ry||0,o.rz||0,o.order||'XYZ'); Q.setFromEuler(E);
+    const ck=Math.floor((x+MAP_W)/56)+'_'+Math.floor((z+MAP_D)/56);   // 56マスごとにまとめる
+    M.compose(P.set(x,y,z),Q,S.set(sx,sy,sz)); push(mat.uuid+ck+(o.ns?'n':''),mat,geo,M.clone(),!o.ns);
+    if(o.ol){ const a=o.ol===true?0.12:o.ol; M.compose(P.set(x,y,z),Q,S.set(sx+a,sy+a,sz+a)); push(OUTLINE_MAT.uuid+ck,OUTLINE_MAT,geo,M.clone(),false); }
+  }
+  function build(parent){
+    for(const g of groups.values()){
+      let n=0; const parts=g.list.map(({geo,m})=>{ const q=(geo.index?geo.toNonIndexed():geo.clone()); q.applyMatrix4(m); n+=q.attributes.position.count; return q; });
+      const pos=new Float32Array(n*3), nor=new Float32Array(n*3), uv=new Float32Array(n*2); let o=0;
+      parts.forEach(q=>{ const c=q.attributes.position.count; pos.set(q.attributes.position.array,o*3); if(q.attributes.normal) nor.set(q.attributes.normal.array,o*3); if(q.attributes.uv) uv.set(q.attributes.uv.array,o*2); o+=c; q.dispose(); });
+      const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.BufferAttribute(pos,3)); bg.setAttribute('normal',new THREE.BufferAttribute(nor,3)); bg.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+      bg.computeBoundingSphere();
+      const mesh=new THREE.Mesh(bg,g.mat); mesh.castShadow=g.shadow; mesh.receiveShadow=g.mat!==OUTLINE_MAT; mesh.matrixAutoUpdate=false; mesh.updateMatrix(); parent.add(mesh);
+    }
+  }
+  return {put,build};
+}
+const UG={
+  box:new THREE.BoxGeometry(1,1,1),
+  cyl6:new THREE.CylinderGeometry(0.5,0.5,1,6), cyl8:new THREE.CylinderGeometry(0.5,0.5,1,8), cyl12:new THREE.CylinderGeometry(0.5,0.5,1,12), cyl24:new THREE.CylinderGeometry(0.5,0.5,1,24),
+  cone6:new THREE.ConeGeometry(0.5,1,6), cone8:new THREE.ConeGeometry(0.5,1,8), cone12:new THREE.ConeGeometry(0.5,1,12),
+  roof:(()=>{ const g=new THREE.ConeGeometry(0.5*Math.SQRT2,1,4); g.rotateY(Math.PI/4); return g; })(),
+  frustum:new THREE.CylinderGeometry(0.15,0.5,1,16),
+  sph:new THREE.IcosahedronGeometry(0.5,1), rock:new THREE.DodecahedronGeometry(0.5,0),
+  dome:new THREE.SphereGeometry(0.5,14,8,0,Math.PI*2,0,Math.PI/2)
+};
+
+/* ---------- 地面のテクスチャ ---------- */
+function biomeTex(kind){
+  const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d'); const R=mulberry(kind.length*977+13), r=(a,b)=>a+R()*(b-a);
+  const blob=(col,n,a,b)=>{ for(let i=0;i<n;i++){ x.fillStyle=col; x.globalAlpha=r(0.08,0.22); x.beginPath(); x.ellipse(r(0,256),r(0,256),r(a,b),r(a,b)*r(0.5,1),r(0,3),0,7); x.fill(); } x.globalAlpha=1; };
+  if(kind==='forest'){ x.fillStyle='#5ba553'; x.fillRect(0,0,256,256); blob('#3f8f45',26,10,34); blob('#7cc46a',20,8,26);
+    x.strokeStyle='rgba(40,110,45,.55)'; x.lineWidth=2; for(let i=0;i<160;i++){ const a=r(0,256), b=r(0,256); x.beginPath(); x.moveTo(a,b); x.lineTo(a+r(-3,3),b-r(4,9)); x.stroke(); }
+    for(let i=0;i<14;i++){ x.fillStyle=['#fff3bf','#ffd8e6','#ffffff'][i%3]; x.beginPath(); x.arc(r(0,256),r(0,256),2.2,0,7); x.fill(); } }
+  else if(kind==='ice'){ x.fillStyle='#eaf4fb'; x.fillRect(0,0,256,256); blob('#c9e1f2',22,14,40); blob('#ffffff',18,10,30);
+    x.strokeStyle='rgba(140,180,215,.45)'; x.lineWidth=1.5; for(let i=0;i<10;i++){ let a=r(0,256), b=r(0,256); x.beginPath(); x.moveTo(a,b); for(let k=0;k<4;k++){ a+=r(-22,22); b+=r(-22,22); x.lineTo(a,b); } x.stroke(); }
+    for(let i=0;i<40;i++){ x.fillStyle='rgba(255,255,255,.9)'; x.fillRect(r(0,256),r(0,256),2,2); } }
+  else if(kind==='kingdom'){ x.fillStyle='#a49c88'; x.fillRect(0,0,256,256);
+    for(let j=0;j<8;j++) for(let i=0;i<8;i++){ const off=j%2?16:0; x.fillStyle=['#d6cfbd','#c9c1ad','#ddd6c6','#c2baa6'][(i*3+j)%4]; x.beginPath(); x.roundRect?x.roundRect(i*32+off-16+2,j*32+2,28,28,7):x.rect(i*32+off-16+2,j*32+2,28,28); x.fill(); }
+    blob('#8f8775',10,10,30); }
+  else if(kind==='fire'){ x.fillStyle='#4a3a36'; x.fillRect(0,0,256,256); blob('#2f2523',24,10,36); blob('#6a524b',16,8,26);
+    x.shadowColor='#ff7a1a'; x.shadowBlur=8; x.strokeStyle='#ff8c1a'; x.lineWidth=2.5;
+    for(let i=0;i<7;i++){ let a=r(0,256), b=r(0,256); x.beginPath(); x.moveTo(a,b); for(let k=0;k<5;k++){ a+=r(-26,26); b+=r(-26,26); x.lineTo(a,b); } x.stroke(); } x.shadowBlur=0; }
+  else if(kind==='road'){ x.fillStyle='#d8bf8a'; x.fillRect(0,0,256,256); blob('#c4a872',30,6,22); blob('#e6d2a6',20,6,18);
+    for(let k=0;k<70;k++){ x.fillStyle=`rgba(140,105,60,${r(.12,.3)})`; x.beginPath(); x.arc(r(0,256),r(0,256),r(1,3.5),0,7); x.fill(); } }
+  const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4; return t;
+}
+
+/* ---------- 見た目をつくる ---------- */
+let WORLD_CACHE=null;
+function buildStaticWorld(){
+  const W=new THREE.Group(); const B=makeBatcher(), P=B.put;
+  const st=wallTex(); st.wrapS=st.wrapT=THREE.RepeatWrapping;
+  const basic=c=>new THREE.MeshBasicMaterial({color:c});
+  const M={
+    wood:tm(0x9a6a3a), woodD:tm(0x6b4423), woodL:tm(0xc8955a), trunk:tm(0x7c4a21),
+    leaf:[tm(0x2f9e44),tm(0x40c057),tm(0x37b24d)], leafD:tm(0x237a35), rock:tm(0x8f97a6), rockD:tm(0x6b7280), moss:tm(0x6aa84f),
+    mushR:tm(0xe03131), white:tm(0xfff8f0), fy:tm(0xffd43b), fp:tm(0xf783ac), water:tm(0x4dabf7,{emissive:0x0b3a66}), lily:tm(0x51cf66),
+    snow:tm(0xf4f9ff), ice:tm(0xa5e3ff,{emissive:0x0b3550}), iceD:tm(0x74c0fc), iceL:tm(0xd3f1ff,{emissive:0x0e3a52}), pineD:tm(0x1f6b4a), carrot:tm(0xff922b), coal:tm(0x222222),
+    stone:tm(0xffffff,{map:st}), stoneL:tm(0xd6d0c4), stoneD:tm(0x8a8478), plaster:tm(0xf5e6c8), beam:tm(0x6b4423),
+    roof:{r:tm(0xc92a2a),b:tm(0x1c7ed6),g:tm(0x2b8a3e)}, gold:tm(0xfab005,{emissive:0x3d2a00}), flagR:tm(0xe03131), flagB:tm(0x1971c2), hedge:tm(0x2f9e44),
+    awn:[tm(0xff6b6b),tm(0x4dabf7),tm(0xffd43b)], cloth:tm(0xf8f9fa), soil:tm(0x7a4e2b),
+    basalt:tm(0x3b302d), basaltL:tm(0x5a4a45), obsid:tm(0x2b2140), char:tm(0x2a2222), bone:tm(0xf1e7d0),
+    win:basic(0xffe08a), lava:basic(0xff6a00), lavaHot:basic(0xffc94d), ember:basic(0xff8c1a), lantern:basic(0xfff3bf)
+  };
+  G.lavaMats=[M.lava,M.lavaHot,M.ember];
+
+  // ---- 地面 ----
+  const ground=(kind,sx,sz)=>{ const t=biomeTex(kind); t.repeat.set(260/8,260/8);
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(260,260),tm(0xffffff,{map:t})); m.rotation.x=-Math.PI/2; m.position.set(sx*130,0,sz*130); m.receiveShadow=true; W.add(m); };
+  ground('forest',-1,-1); ground('ice',1,-1); ground('kingdom',-1,1); ground('fire',1,1);
+  const rt=biomeTex('road'); rt.repeat.set(ROAD_W/6,MAP_D/6);
+  const rm=tm(0xffffff,{map:rt});
+  const r1=new THREE.Mesh(new THREE.PlaneGeometry(ROAD_W,MAP_D+2),rm); r1.rotation.x=-Math.PI/2; r1.position.y=0.012; r1.receiveShadow=true; W.add(r1);
+  const rt2=biomeTex('road'); rt2.repeat.set(MAP_W/6,ROAD_W/6);
+  const r2=new THREE.Mesh(new THREE.PlaneGeometry(MAP_W+2,ROAD_W),tm(0xffffff,{map:rt2})); r2.rotation.x=-Math.PI/2; r2.position.y=0.013; r2.receiveShadow=true; W.add(r2);
+  const pt=biomeTex('kingdom'); pt.repeat.set(5,5);
+  const pl=new THREE.Mesh(new THREE.CircleGeometry(PLAZA_R,48),tm(0xffffff,{map:pt})); pl.rotation.x=-Math.PI/2; pl.position.y=0.016; pl.receiveShadow=true; W.add(pl);
+  // 道のふち石
+  for(let t=-MAP_D/2;t<MAP_D/2;t+=2.2){ if(Math.abs(t)<PLAZA_R+0.5) continue; [-1,1].forEach(s=>P(UG.box,M.stoneL,s*(ROAD_W/2+0.2),0.08,t,0.35,0.18,1.8)); }
+  for(let t=-MAP_W/2;t<MAP_W/2;t+=2.2){ if(Math.abs(t)<PLAZA_R+0.5) continue; [-1,1].forEach(s=>P(UG.box,M.stoneL,t,0.08,s*(ROAD_W/2+0.2),1.8,0.18,0.35)); }
+  for(let i=0;i<10;i++){ const a=i/10*Math.PI*2; P(UG.cyl6,M.beam,Math.cos(a)*(PLAZA_R-0.8),1.1,Math.sin(a)*(PLAZA_R-0.8),0.18,2.2,0.18); P(UG.sph,M.lantern,Math.cos(a)*(PLAZA_R-0.8),2.3,Math.sin(a)*(PLAZA_R-0.8),0.45,0.45,0.45); }
+
+  // ---- 部品 ----
+  const tree=(x,z,s,v,snowy)=>{
+    if(v==='oak'){ P(UG.cyl8,M.trunk,x,0.9*s,z,0.55*s,1.8*s,0.55*s,{ol:true});
+      const lm=M.leaf[Math.floor(Math.abs(x*7+z*3))%3];
+      P(UG.sph,lm,x,2.7*s,z,3.0*s,2.6*s,3.0*s,{ol:true}); P(UG.sph,lm,x+0.7*s,2.3*s,z+0.5*s,2.0*s,1.8*s,2.0*s); P(UG.sph,lm,x-0.2*s,3.5*s,z-0.2*s,1.8*s,1.6*s,1.8*s); return; }
+    P(UG.cyl8,M.trunk,x,0.7*s,z,0.5*s,1.4*s,0.5*s,{ol:true});
+    const lm=snowy?M.pineD:M.leaf[Math.floor(Math.abs(x*5+z*11))%3];
+    [[3.2,1.8,2.0],[2.4,1.5,3.0],[1.6,1.2,3.9]].forEach(([r,h,y])=>{ P(UG.cone8,lm,x,y*s,z,r*s,h*s,r*s,{ol:true}); if(snowy) P(UG.cone8,M.snow,x,(y+h*0.28)*s,z,r*0.55*s,h*0.45*s,r*0.55*s); });
+  };
+  const V={
+    fountain:it=>{ P(UG.cyl24,M.stoneL,it.x,0.4,it.z,3.6,0.8,3.6,{ol:true}); P(UG.cyl24,M.water,it.x,0.8,it.z,3.1,0.06,3.1,{ns:1});
+      P(UG.cyl8,M.stoneL,it.x,1.4,it.z,0.6,1.6,0.6); P(UG.cyl12,M.stoneL,it.x,2.25,it.z,1.5,0.3,1.5,{ol:true}); P(UG.sph,M.water,it.x,2.55,it.z,0.7,0.5,0.7,{ns:1}); },
+    keep:it=>{ const x=it.x, z=it.z; P(UG.box,M.stone,x,3,z,9,6,9,{ol:true});
+      for(let i=-4;i<=4;i+=1.6){ [[i,-4.4],[i,4.4],[-4.4,i],[4.4,i]].forEach(([a,b])=>P(UG.box,M.stone,x+a,6.35,z+b,0.8,0.7,0.8)); }
+      P(UG.cyl12,M.stone,x,7.6,z,4.2,3.2,4.2,{ol:true}); P(UG.cone12,M.roof.r,x,10.5,z,5.2,2.8,5.2,{ol:true});
+      P(UG.cyl6,M.beam,x,12.6,z,0.12,1.6,0.12); P(UG.box,M.flagR,x+0.55,13,z,1,0.6,0.06);
+      P(UG.box,M.woodD,x,1.3,z+4.52,2.2,2.6,0.1); P(UG.box,M.flagR,x-2.6,3.6,z+4.55,1.2,2.2,0.06); P(UG.box,M.flagB,x+2.6,3.6,z+4.55,1.2,2.2,0.06);
+      P(UG.box,M.gold,x-2.6,3.1,z+4.6,0.4,0.4,0.04); P(UG.box,M.gold,x+2.6,3.1,z+4.6,0.4,0.4,0.04); },
+    ctower:it=>{ P(UG.cyl12,M.stone,it.x,3.6,it.z,3.2,7.2,3.2,{ol:true}); P(UG.cyl12,M.stoneL,it.x,7.4,it.z,3.7,0.5,3.7); P(UG.cone12,M.roof.b,it.x,8.9,it.z,4,2.6,4,{ol:true});
+      P(UG.cyl6,M.beam,it.x,10.6,it.z,0.1,1.2,0.1); P(UG.box,M.flagB,it.x+0.45,10.9,it.z,0.8,0.5,0.05); P(UG.box,M.win,it.x,5,it.z+1.62,0.4,0.7,0.05); },
+    wtower:it=>{ P(UG.cyl12,M.stone,it.x,2.3,it.z,3,4.6,3,{ol:true}); P(UG.cone12,M.roof.r,it.x,5.5,it.z,3.6,1.8,3.6,{ol:true}); },
+    cwall:it=>{ P(UG.box,M.stone,it.x,1.6,it.z,it.w,3.2,it.d,{ol:true}); const L=Math.max(it.w,it.d), along=it.w>it.d;
+      for(let t=-L/2+0.4;t<L/2;t+=1.6) P(UG.box,M.stone,it.x+(along?t:0),3.5,it.z+(along?0:t),along?0.8:it.w,0.6,along?it.d:0.8); },
+    gate:it=>{ const ax=it.ax==='x'; [-1,1].forEach(s=>P(UG.box,M.stoneD,it.x+(ax?s*2.7:0),2,it.z+(ax?0:s*2.7),ax?0.9:1.9,4,ax?1.9:0.9,{ol:true}));
+      P(UG.box,M.stoneD,it.x,4.3,it.z,ax?6.3:1.9,0.8,ax?1.9:6.3,{ol:true}); P(UG.box,M.flagR,it.x,3.6,it.z+(ax?0.96:0),ax?1.2:0.06,0.8,ax?0.06:1.2); },
+    gtree:it=>{ const x=it.x, z=it.z; P(UG.cyl8,M.trunk,x,2.6,z,3.4,5.2,3.4,{ol:true});
+      for(let i=0;i<5;i++){ const a=i/5*Math.PI*2+0.3; P(UG.box,M.trunk,x+Math.cos(a)*2,0.35,z+Math.sin(a)*2,2.6,0.7,0.8,{ry:-a}); }
+      P(UG.sph,M.leafD,x,6.6,z,8.5,4.6,8.5,{ol:true}); P(UG.sph,M.leaf[1],x+2.2,6.1,z+1.4,4.8,3.2,4.8); P(UG.sph,M.leaf[0],x-2.4,6.3,z-1.2,5,3.4,5); P(UG.sph,M.leaf[2],x,8.3,z,4.4,3,4.4);
+      for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; P(UG.sph,M.lantern,x+Math.cos(a)*3.6,5.2,z+Math.sin(a)*3.6,0.35,0.35,0.35); } },
+    cabin:it=>{ const {x,z,w,d}=it; P(UG.box,M.wood,x,1.2,z,w,2.4,d,{ol:true});
+      for(let y=0.4;y<2.4;y+=0.6){ P(UG.box,M.woodD,x,y,z+d/2+0.03,w+0.06,0.1,0.08); P(UG.box,M.woodD,x+w/2+0.03,y,z,0.08,0.1,d+0.06); P(UG.box,M.woodD,x-w/2-0.03,y,z,0.08,0.1,d+0.06); }
+      P(UG.roof,M.woodD,x,3.3,z,w+0.9,1.9,d+0.9,{ol:true}); P(UG.box,M.trunk,x,0.8,z+d/2+0.06,1,1.6,0.08);
+      [-1,1].forEach(s=>P(UG.box,M.win,x+s*w*0.28,1.4,z+d/2+0.06,0.7,0.6,0.06)); P(UG.box,M.stoneD,x+w*0.25,3.6,z-d*0.15,0.6,1.6,0.6,{ol:true}); },
+    pond:it=>{ const {x,z,w,d}=it; P(UG.cyl24,M.water,x,0.04,z,w,0.06,d,{ns:1});
+      for(let i=0;i<16;i++){ const a=i/16*Math.PI*2; P(UG.rock,M.rock,x+Math.cos(a)*w*0.5,0.15,z+Math.sin(a)*d*0.5,0.9,0.4,0.8,{ry:a}); }
+      for(let i=0;i<4;i++){ const a=i*1.7; P(UG.cyl12,M.lily,x+Math.cos(a)*w*0.22,0.09,z+Math.sin(a)*d*0.22,0.8,0.04,0.8,{ns:1}); } },
+    tree:it=>tree(it.x,it.z,it.s,it.v,false),
+    spine:it=>tree(it.x,it.z,it.s,'pine',true),
+    rock:it=>{ P(UG.rock,M.rock,it.x,0.7,it.z,it.w*1.15,1.6,it.d*1.15,{ol:true,ry:it.x}); P(UG.rock,M.rockD,it.x+it.w*0.4,0.4,it.z+it.d*0.35,1.1,0.8,1);
+      if(it.moss) P(UG.rock,M.moss,it.x,1.45,it.z,it.w*0.7,0.3,it.d*0.7,{ry:it.z}); },
+    log:it=>{ const h=it.w>it.d, L=Math.max(it.w,it.d);
+      P(UG.cyl12,M.wood,it.x,0.6,it.z,1.15,L,1.15,{ol:true,rz:h?Math.PI/2:0,rx:h?0:Math.PI/2});
+      [-1,1].forEach(s=>P(UG.cyl12,M.woodL,it.x+(h?s*L/2:0),0.6,it.z+(h?0:s*L/2),1.0,0.06,1.0,{rz:h?Math.PI/2:0,rx:h?0:Math.PI/2})); },
+    glacier:it=>{ const {x,z}=it; P(UG.box,M.iceD,x,1.8,z,14,3.6,9,{ol:true}); P(UG.box,M.ice,x+0.5,4.5,z-0.4,10,1.9,6.4,{ol:true,ry:0.08}); P(UG.box,M.snow,x+0.5,5.65,z-0.4,8.4,0.5,5.2,{ry:0.08});
+      for(let i=0;i<10;i++){ const a=i/10*Math.PI*2; P(UG.rock,M.iceL,x+Math.cos(a)*7.2,0.8,z+Math.sin(a)*4.8,2.2,1.8,2,{ry:a}); }
+      [[-4,-2],[3,2.5],[5,-3]].forEach(([a,b])=>{ P(UG.cyl6,M.ice,x+a,6.2,z+b,1,2.4,1,{ol:true}); P(UG.cone6,M.iceL,x+a,7.8,z+b,1,0.9,1); }); },
+    igloo:it=>{ P(UG.dome,M.snow,it.x,0,it.z,4.4,4.6,4.4,{ol:true}); P(UG.box,M.snow,it.x,0.6,it.z+2.3,1.5,1.2,1.5,{ol:true}); P(UG.box,M.coal,it.x,0.55,it.z+3.07,0.8,0.9,0.04);
+      for(let y=0.5;y<2;y+=0.6) P(UG.cyl24,M.iceL,it.x,y,it.z,4.45*Math.cos(Math.asin(y/2.3)),0.05,4.45*Math.cos(Math.asin(y/2.3)),{ns:1}); },
+    crystal:it=>{ const {x,z,s}=it; P(UG.cyl6,M.ice,x,1.4*s,z,1.0*s,2.8*s,1.0*s,{ol:true}); P(UG.cone6,M.iceL,x,3.2*s,z,1.0*s,0.9*s,1.0*s,{ol:true});
+      [[0.7,0.2,0.4],[-0.6,0.5,-0.4],[0.1,-0.7,0.35]].forEach(([a,b,t])=>{ P(UG.cyl6,M.iceL,x+a*s,0.9*s,z+b*s,0.6*s,1.8*s,0.6*s,{rx:b*t*1.4,rz:-a*t*1.4,ol:true}); }); },
+    icewall:it=>{ P(UG.box,M.iceD,it.x,0.9,it.z,it.w,1.8,it.d,{ol:true}); P(UG.box,M.snow,it.x,1.95,it.z,it.w+0.15,0.3,it.d+0.15);
+      const L=Math.max(it.w,it.d), along=it.w>it.d; for(let t=-L/2+0.6;t<L/2;t+=1.4) P(UG.cone6,M.iceL,it.x+(along?t:it.w/2+0.05),1.45,it.z+(along?it.d/2+0.05:t),0.18,0.5,0.18,{rx:Math.PI}); },
+    snowman:it=>{ const {x,z}=it; P(UG.sph,M.snow,x,0.55,z,1.2,1.1,1.2,{ol:true}); P(UG.sph,M.snow,x,1.35,z,0.85,0.8,0.85,{ol:true}); P(UG.sph,M.snow,x,1.95,z,0.6,0.55,0.6,{ol:true});
+      P(UG.cone6,M.carrot,x,1.95,z+0.4,0.1,0.35,0.1,{rx:Math.PI/2}); [-0.12,0.12].forEach(a=>P(UG.sph,M.coal,x+a,2.05,z+0.27,0.08,0.08,0.08)); P(UG.cyl12,M.coal,x,2.35,z,0.5,0.4,0.5); },
+    house:it=>{ const {x,z,w,d}=it; P(UG.box,M.plaster,x,1.3,z,w,2.6,d,{ol:true});
+      [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>P(UG.box,M.beam,x+a*(w/2-0.1),1.3,z+b*(d/2-0.1),0.28,2.62,0.28)); P(UG.box,M.beam,x,2.5,z+d/2+0.02,w,0.22,0.08);
+      P(UG.roof,M.roof[it.roof]||M.roof.r,x,3.7,z,w+0.8,2.2,d+0.8,{ol:true}); P(UG.box,M.woodD,x,0.75,z+d/2+0.05,0.9,1.5,0.08);
+      [-1,1].forEach(s=>P(UG.box,M.win,x+s*w*0.3,1.6,z+d/2+0.05,0.7,0.7,0.06)); P(UG.box,M.stoneD,x-w*0.25,4.1,z-d*0.1,0.55,1.4,0.55,{ol:true}); },
+    tower:it=>{ P(UG.cyl8,M.stone,it.x,2.5,it.z,2.8,5,2.8,{ol:true}); P(UG.cyl8,M.stoneL,it.x,5.25,it.z,3.3,0.5,3.3); P(UG.cone8,M.roof.r,it.x,6.7,it.z,3.6,2.4,3.6,{ol:true});
+      P(UG.box,M.win,it.x,3.5,it.z+1.42,0.4,0.6,0.05); },
+    hedge:it=>{ P(UG.box,M.hedge,it.x,0.65,it.z,it.w,1.3,it.d,{ol:true}); const L=Math.max(it.w,it.d), along=it.w>it.d;
+      for(let t=-L/2+0.6;t<L/2;t+=1.1) P(UG.sph,(Math.round(t*3)%2?M.fp:M.fy),it.x+(along?t:0),1.35,it.z+(along?0:t),0.3,0.3,0.3); },
+    stall:it=>{ const {x,z}=it; P(UG.box,M.woodL,x,0.45,z,3.2,0.9,2.2,{ol:true}); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>P(UG.cyl6,M.beam,x+a*1.45,1.3,z+b*0.95,0.14,2.6,0.14));
+      for(let i=0;i<4;i++) P(UG.box,i%2?M.cloth:M.awn[it.c||0],x-1.2+i*0.8,2.6,z,0.8,0.12,2.5,{rx:-0.18,ol:0.06});
+      for(let i=0;i<5;i++) P(UG.sph,[M.mushR,M.fy,M.carrot,M.lily][i%4],x-1.1+i*0.55,1.0,z+0.3,0.35,0.35,0.35); },
+    statue:it=>{ const {x,z}=it; P(UG.box,M.stoneL,x,0.6,z,1.8,1.2,1.8,{ol:true}); P(UG.cyl8,M.gold,x,1.9,z,0.8,1.4,0.8,{ol:true}); P(UG.sph,M.gold,x,2.9,z,0.65,0.65,0.65,{ol:true});
+      P(UG.box,M.gold,x+0.55,2.2,z+0.1,0.12,1.6,0.12,{rz:-0.3}); },
+    volcano:it=>{ const {x,z}=it; P(UG.frustum,M.basalt,x,4,z,19,8,19,{ol:true}); P(UG.frustum,M.basaltL,x+1.2,1.5,z+1.6,12,3,12);
+      P(UG.cyl24,M.lava,x,8.03,z,5.3,0.1,5.3,{ns:1}); P(UG.cyl24,M.lavaHot,x,8.06,z,2.8,0.08,2.8,{ns:1});
+      for(let i=0;i<6;i++){ const a=i/6*Math.PI*2+0.4, rm=6.4; P(UG.box,M.lava,x+Math.sin(a)*rm,4.2,z+Math.cos(a)*rm,0.8,0.12,10.4,{rx:Math.atan2(8,6.65),ry:a,order:'YXZ',ns:1}); }
+      for(let i=0;i<12;i++){ const a=i/12*Math.PI*2; P(UG.rock,M.basaltL,x+Math.cos(a)*9.6,0.6,z+Math.sin(a)*9.6,2.2,1.4,2,{ry:a}); } },
+    lava:it=>{ const {x,z,w,d}=it; P(UG.cyl24,M.lava,x,0.05,z,w,0.08,d,{ns:1}); P(UG.cyl24,M.lavaHot,x,0.07,z,w*0.5,0.06,d*0.5,{ns:1});
+      for(let i=0;i<14;i++){ const a=i/14*Math.PI*2; P(UG.rock,M.basalt,x+Math.cos(a)*w*0.5,0.18,z+Math.sin(a)*d*0.5,1,0.5,0.9,{ry:a}); } },
+    obsidian:it=>{ const {x,z,s}=it; P(UG.cyl6,M.obsid,x,1.6*s,z,1.5*s,3.2*s,1.5*s,{ol:true,ry:x}); P(UG.cone6,M.obsid,x,3.6*s,z,1.5*s,0.8*s,1.5*s,{ol:true,ry:x});
+      P(UG.box,M.ember,x+0.66*s,1.6*s,z+0.2*s,0.06,2.4*s,0.12,{rz:0.15,ns:1}); P(UG.box,M.ember,x-0.3*s,1.2*s,z+0.62*s,0.12,1.6*s,0.06,{rx:-0.2,ns:1}); },
+    vrock:it=>{ P(UG.rock,M.basaltL,it.x,0.8,it.z,it.w*1.15,1.8,it.d*1.15,{ol:true,ry:it.z}); P(UG.sph,M.ember,it.x+it.w*0.3,1.2,it.z+it.d*0.45,0.3,0.3,0.3,{ns:1}); P(UG.sph,M.ember,it.x-it.w*0.35,0.6,it.z+it.d*0.5,0.22,0.22,0.22,{ns:1}); },
+    ruin:it=>{ const L=Math.max(it.w,it.d), along=it.w>it.d; P(UG.box,M.stoneD,it.x,0.6,it.z,it.w,1.2,it.d,{ol:true});
+      let k=0; for(let t=-L/2+0.75;t<L/2-0.2;t+=1.5){ const h=[1.4,2.6,1.9,2.2,1.2][k++%5]; P(UG.box,M.basaltL,it.x+(along?t:0),h/2,it.z+(along?0:t),along?1.45:it.w+0.02,h,along?it.d+0.02:1.45,{ol:true}); } },
+    deadtree:it=>{ const {x,z}=it; P(UG.cyl6,M.char,x,1.5,z,0.5,3,0.5,{ol:true}); [[0.7,2.2,0.8],[-0.8,2.6,-0.7],[0.3,2.9,0.5]].forEach(([a,y,r])=>P(UG.cyl6,M.char,x+a*0.5,y,z,0.16,1.4,0.16,{rz:-r,ol:0.08})); }
+  };
+  LAYOUT.items.forEach(it=>{ const f=V[it.k]; if(f) f(it); });
+
+  // ---- 飾り（ぶつからない） ----
+  const D={
+    bush:it=>{ const s=it.s; P(UG.sph,M.leaf[1],it.x,0.45*s,it.z,1.4*s,1.0*s,1.4*s,{ol:0.08}); P(UG.sph,M.leaf[2],it.x+0.5*s,0.35*s,it.z+0.3*s,0.9*s,0.7*s,0.9*s); },
+    mush:it=>{ const s=it.s; P(UG.cyl8,M.white,it.x,0.25*s,it.z,0.25*s,0.5*s,0.25*s); P(UG.dome,M.mushR,it.x,0.45*s,it.z,0.8*s,0.6*s,0.8*s,{ol:0.06}); },
+    flowers:it=>{ const m=it.c==='y'?M.fy:it.c==='p'?M.fp:M.white; for(let i=0;i<4;i++) P(UG.sph,m,it.x+Math.cos(i*1.7)*0.35,0.15,it.z+Math.sin(i*1.7)*0.35,0.22,0.22,0.22); },
+    flake:it=>{ P(UG.cyl24,M.iceL,it.x,0.03,it.z,it.w,0.04,it.d,{ns:1}); for(let i=0;i<6;i++) P(UG.box,M.iceD,it.x+(i-2.5)*1.6,0.06,it.z+Math.sin(i*2)*2,0.08,0.02,3.5,{ry:i*0.9,ns:1}); },
+    mound:it=>P(UG.sph,M.snow,it.x,0.15,it.z,1.6*it.s,0.6*it.s,1.2*it.s,{ry:it.x}),
+    shard:it=>P(UG.cone6,M.ice,it.x,0.35*it.s,it.z,0.4*it.s,0.7*it.s,0.4*it.s,{rz:0.2,ol:0.05}),
+    lamp:it=>{ P(UG.cyl6,M.coal,it.x,1.1,it.z,0.15,2.2,0.15); P(UG.sph,M.lantern,it.x,2.3,it.z,0.42,0.42,0.42); },
+    fbed:it=>{ P(UG.box,M.soil,it.x,0.12,it.z,1.7,0.24,1.0,{ol:0.06}); for(let i=0;i<6;i++) P(UG.sph,i%2?M.fp:M.fy,it.x-0.6+i*0.24,0.32,it.z+(i%2?0.2:-0.2),0.24,0.24,0.24); },
+    barrel:it=>{ P(UG.cyl12,M.wood,it.x,0.5,it.z,0.8,1,0.8,{ol:0.06}); P(UG.cyl12,M.coal,it.x,0.75,it.z,0.84,0.06,0.84); P(UG.cyl12,M.coal,it.x,0.25,it.z,0.84,0.06,0.84); },
+    vent:it=>{ P(UG.box,M.ember,it.x,0.025,it.z,0.16,0.03,1.4,{ry:it.x,ns:1}); P(UG.box,M.ember,it.x,0.026,it.z,0.12,0.03,0.9,{ry:it.x+1.2,ns:1}); },
+    bones:it=>{ P(UG.cyl6,M.bone,it.x,0.1,it.z,0.14,0.9,0.14,{rz:Math.PI/2,ry:it.x}); P(UG.sph,M.bone,it.x+0.3,0.15,it.z+0.2,0.35,0.3,0.35); },
+    pebble:it=>P(UG.rock,M.basaltL,it.x,0.15,it.z,0.7*it.s,0.4*it.s,0.6*it.s,{ry:it.z})
+  };
+  LAYOUT.deco.forEach(it=>{ const f=D[it.k]; if(f) f(it); });
+
+  // ---- 外周の壁（エリアごとに見た目がちがう） ----
+  const ex=MAP_W/2+0.7, ez=MAP_D/2+0.7;
+  const segs=[]; for(let t=-MAP_W/2;t<MAP_W/2;t+=8) [-1,1].forEach(s=>segs.push({x:t+4,z:s*ez,len:8,ax:'x'}));
+  for(let t=-MAP_D/2;t<MAP_D/2;t+=8) [-1,1].forEach(s=>segs.push({x:s*ex,z:t+4,len:8,ax:'z'}));
+  segs.forEach(g=>{ const ax=g.ax==='x', c=ax?g.x:g.z; if(Math.abs(c)<ROAD_W/2+1) return;
+    const len=Math.min(g.len,Math.abs(c)-ROAD_W/2+3)+0.05, w=ax?len:1.3, d=ax?1.3:len, b=biomeAt(g.x,g.z);
+    if(b==='forest'){ P(UG.box,M.woodD,g.x,1.1,g.z,w,2.2,d,{ol:true}); for(let t=-len/2+0.4;t<len/2;t+=0.8) P(UG.cone6,M.wood,g.x+(ax?t:0),2.55,g.z+(ax?0:t),0.7,0.7,0.7,{ol:0.06}); }
+    else if(b==='ice'){ P(UG.box,M.iceD,g.x,1.2,g.z,w,2.4,d,{ol:true}); P(UG.box,M.snow,g.x,2.5,g.z,w+0.1,0.35,d+0.2); }
+    else if(b==='kingdom'){ P(UG.box,M.stone,g.x,1.3,g.z,w,2.6,d,{ol:true}); for(let t=-len/2+0.4;t<len/2;t+=1.6) P(UG.box,M.stone,g.x+(ax?t:0),2.9,g.z+(ax?0:t),ax?0.8:1.3,0.6,ax?1.3:0.8); }
+    else { P(UG.box,M.basalt,g.x,1.1,g.z,w,2.2,d,{ol:true}); for(let t=-len/2+0.6;t<len/2;t+=1.5) P(UG.rock,M.basaltL,g.x+(ax?t:0),2.3,g.z+(ax?0:t),1.1,0.9,1.1,{ry:t}); }
+  });
+  // 道の先の門
+  [[0,-ez,'x'],[0,ez,'x'],[-ex,0,'z'],[ex,0,'z']].forEach(([x,z,a])=>{ const ax=a==='x';
+    [-1,1].forEach(s=>P(UG.box,M.stoneD,x+(ax?s*(ROAD_W/2+0.6):0),2.2,z+(ax?0:s*(ROAD_W/2+0.6)),ax?1.4:1.6,4.4,ax?1.6:1.4,{ol:true}));
+    P(UG.box,M.stoneD,x,4.8,z,ax?ROAD_W+2.6:1.6,0.9,ax?1.6:ROAD_W+2.6,{ol:true}); });
+  // ---- マップの外の景色 ----
+  LAYOUT.outside.forEach(o=>{ const {x,z,s,r}=o;
+    if(o.b==='forest') tree(x,z,s*1.2,r<0.6?'pine':'oak',false);
+    else if(o.b==='ice'){ if(r<0.6) tree(x,z,s*1.2,'pine',true); else P(UG.rock,M.iceL,x,1,z,3*s,2.4*s,2.6*s,{ry:x,ol:true}); }
+    else if(o.b==='kingdom'){ if(r<0.7) tree(x,z,s,'oak',false); else { P(UG.box,M.plaster,x,1.3,z,4.4,2.6,4,{ol:true}); P(UG.roof,M.roof.r,x,3.7,z,5.2,2.2,4.8,{ol:true}); } }
+    else { if(r<0.5) P(UG.rock,M.basaltL,x,1,z,3*s,2.4*s,2.6*s,{ry:x,ol:true}); else P(UG.cyl6,M.char,x,1.5*s,z,0.5*s,3*s,0.5*s,{ol:true}); }
+  });
+  B.build(W);
+  return W;
+}
+
+/* ---------- ミニマップ ---------- */
+let MINI_BG=null;
+function miniBg(){
+  if(MINI_BG) return MINI_BG;
+  const k=2, c=document.createElement('canvas'); c.width=MAP_W*k; c.height=MAP_D*k; const x=c.getContext('2d');
+  const X=v=>(v+MAP_W/2)*k, Z=v=>(v+MAP_D/2)*k;
+  [['forest',-1,-1],['ice',1,-1],['kingdom',-1,1],['fire',1,1]].forEach(([b,sx,sz])=>{ x.fillStyle=BIOMES[b].mini; x.fillRect(sx<0?0:X(0),sz<0?0:Z(0),MAP_W*k/2,MAP_D*k/2); });
+  x.fillStyle='#d8bf8a'; x.fillRect(X(-ROAD_W/2),0,ROAD_W*k,MAP_D*k); x.fillRect(0,Z(-ROAD_W/2),MAP_W*k,ROAD_W*k);
+  x.beginPath(); x.arc(X(0),Z(0),PLAZA_R*k,0,7); x.fill();
+  LAYOUT.cols.forEach(cl=>{ x.fillStyle=cl.low?BIOMES[biomeAt(cl.x,cl.z)].lowCol:'rgba(20,20,40,.45)'; x.fillRect(X(cl.x-cl.w/2),Z(cl.z-cl.d/2),cl.w*k,cl.d*k); });
+  MINI_BG=c; return c;
+}
+let miniT=0;
+function updateMinimap(dt){
+  const cv=$('minimap'); if(!cv||!G.zone||!G.player) return;
+  miniT-=dt; if(miniT>0) return; miniT=0.1;
+  const bg=miniBg(); if(cv.width!==bg.width){ cv.width=bg.width; cv.height=bg.height; }
+  const x=cv.getContext('2d'), k=2, X=v=>(v+MAP_W/2)*k, Z=v=>(v+MAP_D/2)*k, Zn=G.zone;
+  x.drawImage(bg,0,0);
+  // 毒ガス
+  x.save(); x.beginPath(); x.rect(0,0,cv.width,cv.height); x.arc(X(Zn.c.x),Z(Zn.c.z),Math.max(0.5,Zn.r*k),0,Math.PI*2,true); x.fillStyle='rgba(22,163,74,.45)'; x.fill('evenodd'); x.restore();
+  x.lineWidth=2.5; x.strokeStyle='#ecfccb'; x.beginPath(); x.arc(X(Zn.c.x),Z(Zn.c.z),Math.max(0.5,Zn.r*k),0,7); x.stroke();
+  const ph=ZONE_PLAN[Zn.phase]; if(ph){ x.setLineDash([6,5]); x.strokeStyle='#fff'; x.lineWidth=2; x.beginPath(); x.arc(X(Zn.c.x),Z(Zn.c.z),Math.max(0.5,ph.to*k),0,7); x.stroke(); x.setLineDash([]); }
+  // 味方と自分
+  for(const b of G.brawlers){ if(b.dead||b.isPlayer||b.team!==G.myTeam) continue; x.fillStyle='#3b82f6'; x.strokeStyle='#fff'; x.lineWidth=2; x.beginPath(); x.arc(X(b.pos.x),Z(b.pos.z),5,0,7); x.fill(); x.stroke(); }
+  const p=G.player; if(!p.dead){ const a=p.root.rotation.y; x.save(); x.translate(X(p.pos.x),Z(p.pos.z)); x.rotate(-a+Math.PI);
+    x.fillStyle='#facc15'; x.strokeStyle='#1f2937'; x.lineWidth=2.5; x.beginPath(); x.moveTo(0,-9); x.lineTo(7,7); x.lineTo(0,3); x.lineTo(-7,7); x.closePath(); x.fill(); x.stroke(); x.restore(); }
+}
+
+/* ---------- エリアの空気（雪・火の粉など）とエリア名 ---------- */
+let ambT=0, areaNow='', areaChk=0;
+function ambientFx(dt){
+  if(!G.scene||!G.camT) return;
+  const c=G.camT, b=biomeAt(c.x,c.z), B=BIOMES[b];
+  // 空と霧の色を少しずつエリアの色にする
+  const tc=_col1.setHex(B.fog); G.scene.background.lerp(tc,Math.min(1,dt*1.5)); if(G.scene.fog) G.scene.fog.color.copy(G.scene.background);
+  if(G.lavaMats){ const f=0.85+Math.sin(G.t*3)*0.15; G.lavaMats[0].color.setRGB(1,0.42*f,0); G.lavaMats[2].color.setRGB(1,0.5*f+0.05,0.08); }
+  const R=(a)=>rand(-a,a);
+  if(b==='ice'){ for(let i=0;i<dt*40;i++) emit(new V3(c.x+R(22),rand(6,11),c.z+R(18)),{color:0xffffff,size:rand(0.18,0.32),vel:new V3(R(0.6),-rand(2,3.2),R(0.6)),life:3,drag:0}); }
+  else if(b==='fire'){ for(let i=0;i<dt*22;i++) emit(new V3(c.x+R(22),0.2,c.z+R(18)),{color:pick([0xff8c1a,0xffc94d,0xff5a1a]),size:rand(0.14,0.3),vel:new V3(R(0.5),rand(1.5,3.5),R(0.5)),life:1.8,drag:0.2,add:true}); }
+  else if(b==='forest'){ for(let i=0;i<dt*7;i++) emit(new V3(c.x+R(20),rand(0.6,2.6),c.z+R(16)),{color:pick([0xd9f99d,0xfef08a]),size:rand(0.18,0.28),vel:new V3(R(0.4),R(0.3),R(0.4)),life:2.4,drag:0,add:true}); }
+  else { for(let i=0;i<dt*3;i++) emit(new V3(c.x+R(20),rand(4,8),c.z+R(16)),{color:0xfbcfe8,size:0.22,vel:new V3(rand(0.4,1),-rand(0.6,1),R(0.4)),life:4,drag:0}); }
+  // 火山のけむり
+  if(Math.abs(c.x-47)<45&&Math.abs(c.z-53)<45){ ambT-=dt; if(ambT<=0){ ambT=0.12; emit(new V3(47+R(1.5),8.6,53+R(1.5)),{color:pick([0x57534e,0x78716c,0x44403c]),size:2.6,size1:5.5,op:0.55,vel:new V3(rand(0.2,0.8),rand(2.5,4),R(0.4)),life:3,drag:0.1});
+    if(Math.random()<0.3) emit(new V3(47+R(1.5),8.4,53+R(1.5)),{color:0xff8c1a,size:0.5,vel:new V3(R(2),rand(4,7),R(2)),life:1.2,grav:6,add:true}); } }
+  // エリア名
+  const p=G.player; areaChk-=dt;
+  if(p&&!p.dead&&areaChk<=0){ areaChk=0.4; const nb=Math.hypot(p.pos.x,p.pos.z)<PLAZA_R+1?'plaza':biomeAt(p.pos.x,p.pos.z);
+    if(nb!==areaNow){ areaNow=nb; const el=$('area-tag'); el.innerHTML=nb==='plaza'?'⛲ 中央広場':`${BIOMES[nb].icon} ${BIOMES[nb].name}`; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); } }
+}
+const _col1=new THREE.Color();
+
 function disposeScene(s){ s.traverse(o=>{ if(o.geometry&&o.geometry!==MC_GEO&&o.geometry!==RING_GEO&&o.geometry!==DISC_GEO) o.geometry.dispose(); if(o.material){ (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ if(m!==OUTLINE_MAT) m.dispose(); }); } }); }
 
 function buildWorld(){
-  if(G.scene) disposeScene(G.scene);
+  if(G.scene){ if(WORLD_CACHE) G.scene.remove(WORLD_CACHE); disposeScene(G.scene); }
   const S=G.scene=new THREE.Scene();
-  S.background=new THREE.Color(0x86cfa0); S.fog=new THREE.Fog(0x86cfa0,48,95);
-  G.camera=new THREE.PerspectiveCamera(46,VW()/VH(),0.1,200);
+  S.background=new THREE.Color(0x9fd3f2); S.fog=new THREE.Fog(0x9fd3f2,48,100);
+  G.camera=new THREE.PerspectiveCamera(46,VW()/VH(),0.1,220);
   S.add(new THREE.HemisphereLight(0xffffff,0x8a9a7a,0.46));
-  const dl=new THREE.DirectionalLight(0xfff4e0,0.62); dl.position.set(14,32,12); dl.castShadow=save.shadows;
-  dl.shadow.mapSize.set(2048,2048); const sc=dl.shadow.camera; sc.left=-34; sc.right=34; sc.top=36; sc.bottom=-36; sc.near=1; sc.far=90; dl.shadow.bias=-0.0008;
+  // 太陽はカメラについていく（広いマップでも近くにきれいな影が出る）
+  const dl=G.sun=new THREE.DirectionalLight(0xfff4e0,0.62); dl.position.set(14,32,12); dl.castShadow=save.shadows;
+  dl.shadow.mapSize.set(2048,2048); const sc=dl.shadow.camera; sc.left=-32; sc.right=32; sc.top=32; sc.bottom=-32; sc.near=1; sc.far=90; dl.shadow.bias=-0.0008;
   S.add(dl); S.add(dl.target);
   G.renderer.shadowMap.enabled=save.shadows;
-  const grass=new THREE.Mesh(new THREE.PlaneGeometry(240,240),tm(0x6fbf73)); grass.rotation.x=-Math.PI/2; grass.position.y=-0.02; grass.receiveShadow=true; S.add(grass);
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(MAP_W,MAP_D),tm(0xffffff,{map:floorTex()})); floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; S.add(floor);
-  const cr=new THREE.Mesh(new THREE.RingGeometry(5.6,5.9,64),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.5})); cr.rotation.x=-Math.PI/2; cr.position.y=0.02; S.add(cr);
-  const fenceMat=tm(0x8d5a2b), fenceTop=tm(0xc58b4c);
-  [[0,-MAP_D/2-0.1,MAP_W+1.2,0.8],[0,MAP_D/2+0.1,MAP_W+1.2,0.8],[-MAP_W/2-0.4,0,0.8,MAP_D+1],[MAP_W/2+0.4,0,0.8,MAP_D+1]].forEach(([x,z,w,d])=>{
-    const f=new THREE.Mesh(new THREE.BoxGeometry(w,0.9,d),fenceMat); f.position.set(x,0.45,z); f.castShadow=f.receiveShadow=true; S.add(f);
-    const t=new THREE.Mesh(new THREE.BoxGeometry(w+0.1,0.15,d+0.1),fenceTop); t.position.set(x,0.95,z); S.add(t);
-  });
-  const trunkM=tm(0x7c4a21), leafM=[tm(0x2f9e44),tm(0x40c057),tm(0x37b24d)], rockM=tm(0x94a3b8);
-  for(let i=0;i<90;i++){
-    let x,z; do{ x=rand(-MAP_W/2-26,MAP_W/2+26); z=rand(-MAP_D/2-28,MAP_D/2+28); }while(Math.abs(x)<MAP_W/2+2.5&&Math.abs(z)<MAP_D/2+2.5);
-    const g=new THREE.Group(); g.position.set(x,0,z); const s=rand(0.9,1.6); g.scale.setScalar(s);
-    if(Math.random()<0.8){ const tr=new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.35,1.4,8),trunkM); tr.position.y=0.7; tr.castShadow=true; g.add(tr);
-      const lm=pick(leafM); [[1.6,1.8,2],[1.2,1.5,3],[0.8,1.2,3.9]].forEach(([r,h,y])=>{ const c=new THREE.Mesh(new THREE.ConeGeometry(r,h,9),lm); c.position.y=y; c.castShadow=true; g.add(c); }); }
-    else { const r=new THREE.Mesh(new THREE.DodecahedronGeometry(0.9),rockM); r.position.y=0.4; r.scale.y=0.6; r.castShadow=true; g.add(r); }
-    S.add(g);
-  }
-  G.colliders=[]; G.crates=[];
-  const wt=wallTex(); wt.wrapS=wt.wrapT=THREE.RepeatWrapping;
-  const wallM=tm(0xffffff,{map:wt}), wallTopM=tm(0x6ee7b7);
-  const allWalls=[]; WALLS.forEach(w=>{ allWalls.push(w); allWalls.push([-w[0],-w[1],w[2],w[3]]); });
-  allWalls.forEach(([x,z,w,d])=>{
-    const h=1.5; const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),wallM); m.position.set(x,h/2,z); m.castShadow=m.receiveShadow=true; S.add(m);
-    const top=new THREE.Mesh(new THREE.BoxGeometry(w+0.12,0.22,d+0.12),wallTopM); top.position.set(x,h+0.08,z); top.castShadow=true; S.add(top);
-    const ol=new THREE.Mesh(new THREE.BoxGeometry(w+0.08,h+0.06,d+0.08),OUTLINE_MAT); ol.position.copy(m.position); S.add(ol);
-    for(let k=0;k<Math.max(w,d)/1.2;k++){ const b=new THREE.Mesh(new THREE.ConeGeometry(0.12,0.4,5),leafM[1]); const along=w>d; b.position.set(x+(along?rand(-w/2,w/2):(Math.random()<.5?-1:1)*(w/2+0.1)),0.2,z+(along?(Math.random()<.5?-1:1)*(d/2+0.1):rand(-d/2,d/2))); S.add(b); }
-    addCollider(x,z,w,d);
-  });
-  const ct=crateTex(), crateM=tm(0xffffff,{map:ct});
-  const crateGeo=new THREE.BoxGeometry(1.7,1.4,1.7);
-  const allCr=[]; // 木箱はなくした（CRATES は使わない）
-  allCr.forEach(([x,z],idx)=>{
-    const m=new THREE.Mesh(crateGeo,crateM); m.position.set(x,0.7,z); m.castShadow=m.receiveShadow=true;
-    const ol=new THREE.Mesh(crateGeo,OUTLINE_MAT); ol.scale.setScalar(1.05); m.add(ol); S.add(m);
-    const cr={idx,pos:new V3(x,0,z),mesh:m,hp:1600,max:1600,dead:false,shake:0};
-    cr.col=addCollider(x,z,1.7,1.7,cr); G.crates.push(cr);
-  });
+  ensureMap();
+  if(!WORLD_CACHE) WORLD_CACHE=buildStaticWorld();
+  S.add(WORLD_CACHE);
+  G.crates=[]; areaNow='';
   G.zoneMat=new THREE.MeshBasicMaterial({color:0x14532d,transparent:true,opacity:0.42,depthWrite:false,side:THREE.DoubleSide});
   G.zoneOut=null; G.zoneLastR=-1;
   G.zoneWall=new THREE.Mesh(new THREE.CylinderGeometry(1,1,3.4,140,1,true),new THREE.MeshBasicMaterial({color:0x4ade80,transparent:true,opacity:0.2,depthWrite:false,side:THREE.DoubleSide}));
@@ -2035,7 +2481,8 @@ function updateCubes(dt){
   }
 }
 /* ---------- 安全地帯 ---------- */
-const ZONE_PLAN=[{wait:20,to:31,dur:20},{wait:12,to:20,dur:18},{wait:10,to:11,dur:16},{wait:8,to:3,dur:16},{wait:6,to:0,dur:14}];
+const ZONE_START=120;
+const ZONE_PLAN=[{wait:25,to:76,dur:24},{wait:16,to:50,dur:22},{wait:14,to:32,dur:20},{wait:12,to:18,dur:18},{wait:10,to:8,dur:16},{wait:8,to:0,dur:16}];
 function zoneBanner(){ setBanner('<span class="big" style="font-size:44px">⚠</span>毒ガスがせまってくる！','red',true); setTimeout(()=>{ if(G.state==='play') $('banner').className=''; },1800); SFX.play('ult',0.6); }
 function updateZone(dt){
   const Z=G.zone; Z.t+=dt; const ph=ZONE_PLAN[Z.phase];
@@ -2054,14 +2501,16 @@ function zoneVisual(){
   const Z=G.zone; if(!Z) return;
   if(Math.abs(Z.r-G.zoneLastR)>0.04){
     G.zoneLastR=Z.r; if(G.zoneOut){ G.scene.remove(G.zoneOut); G.zoneOut.geometry.dispose(); }
-    const g=new THREE.RingGeometry(Math.max(0.1,Z.r),140,128,1); g.rotateX(-Math.PI/2);
+    const g=new THREE.RingGeometry(Math.max(0.1,Z.r),Z.r+260,160,1); g.rotateX(-Math.PI/2);
     G.zoneOut=new THREE.Mesh(g,G.zoneMat); G.zoneOut.position.set(Z.c.x,0.035,Z.c.z); G.zoneOut.renderOrder=2; G.scene.add(G.zoneOut);
     G.zoneWall.position.x=Z.c.x; G.zoneWall.position.z=Z.c.z; G.zoneEdge.position.x=Z.c.x; G.zoneEdge.position.z=Z.c.z;
     G.zoneWall.scale.set(Math.max(0.01,Z.r),1,Math.max(0.01,Z.r)); G.zoneEdge.scale.set(Math.max(0.01,Z.r),1,Math.max(0.01,Z.r));
   }
   G.zoneWall.material.opacity=0.16+Math.sin(G.t*3)*0.05;
-  for(let i=0;i<6;i++){ const a=rand(0,6.28), r=Z.r+rand(0.3,6); const x=Z.c.x+Math.cos(a)*r, z=Z.c.z+Math.sin(a)*r;
-    if(Math.abs(x)>MAP_W/2+1||Math.abs(z)>MAP_D/2+1) continue;
+  // カメラの近くのガスのふちだけにけむりを出す
+  const a0=Math.atan2(G.camT.z-Z.c.z,G.camT.x-Z.c.x), spr=Math.min(Math.PI,34/Math.max(1,Z.r));
+  for(let i=0;i<6;i++){ const a=a0+rand(-spr,spr), r=Z.r+rand(0.3,6); const x=Z.c.x+Math.cos(a)*r, z=Z.c.z+Math.sin(a)*r;
+    if(Math.abs(x)>MAP_W/2+1||Math.abs(z)>MAP_D/2+1||d2(new V3(x,0,z),G.camT)>40) continue;
     emit(new V3(x,rand(0.2,2.6),z),{color:pick([0x22c55e,0x4ade80,0x15803d]),size:rand(1.4,2.4),op:0.32,life:1.4,vel:new V3(rand(-.3,.3),0.4,rand(-.3,.3)),drag:0}); }
   for(const b of G.brawlers){ if(!b.dead&&d2(b.pos,Z.c)>Z.r&&Math.random()<0.3) emit(b.pos.clone().add(new V3(rand(-.4,.4),rand(0.5,1.8),rand(-.4,.4))),{color:pick([0x22c55e,0x166534]),size:0.5,life:0.6,vel:new V3(0,1,0)}); }
 }
@@ -2071,7 +2520,8 @@ const aliveTeams=()=>{ const s=new Set(); G.brawlers.forEach(b=>{ if(!b.dead) s.
 /* =========================================================
    ブロウラー
 ========================================================= */
-const BOT_NAMES=['ソラ','ミント','リク','ハナ','ガルム','ノクス','ヴィオ','ゼン','ルル','カイ','モモ','レオ','ユウ','ポポ','ライ','ココ'];
+const MATCH_SIZE=30, MATCH_TEAMS=10;   // ソロ30人／トリオ3人×10チーム
+const BOT_NAMES=['ソラ','ミント','リク','ハナ','ガルム','ノクス','ヴィオ','ゼン','ルル','カイ','モモ','レオ','ユウ','ポポ','ライ','ココ','アオ','ヒナ','タイガ','ルナ','ジン','ミオ','ケン','サクラ','ハル','リン','トア','ナギ','ユキ','コウ','メイ','ダイ','セナ','ツバサ','ノア','ヒカル','マオ','レン','アキ','シオン'];
 const FOOT_GLOW_GEO=new THREE.CircleGeometry(1,24); FOOT_GLOW_GEO.rotateX(-Math.PI/2);
 class Brawler{
   constructor(c){
@@ -2266,6 +2716,9 @@ class Brawler{
   }
   checkReady(){ if(this.ult>=100&&!this.wasReady){ this.wasReady=true; if(this.isPlayer){ SFX.play('ready'); ring(this.pos,0xfacc15,0.5,2.5,0.5); magicCircle(this.pos,'rune',0xfacc15,1.4,0.6,{pop:true,spin:3}); } } }
   visual(dt){
+    if(!this.isPlayer){ const far=Math.abs(this.pos.x-G.camT.x)>28||Math.abs(this.pos.z-G.camT.z)>25;   // 画面の外のキャラは描かない
+      if(far){ if(!this._far){ this._far=true; this.root.visible=false; } this.root.position.copy(this.pos); return; }
+      if(this._far){ this._far=false; this.root.visible=true; } }
     this.animAtk=Math.max(0,this.animAtk-dt*3.2);
     animRig(this.rig,dt,this.move,G.t+this.spawn.x,this.animAtk);
     this.root.position.copy(this.pos); this.root.position.y=this.hop||0;
@@ -2278,6 +2731,15 @@ class Brawler{
     if(this.aura.visible){ const s=1+Math.sin(G.t*8)*0.1; this.aura.scale.set(s,s,s); this.aura.rotation.z+=dt;
       if(Math.random()<dt*14) emit(this.pos.clone().add(new V3(rand(-.6,.6),rand(0.1,0.6),rand(-.6,.6))),{color:pick([this.hero.color,0xfde047]),size:rand(0.25,0.45),vel:new V3(0,rand(1.5,3),0),life:0.7,add:true,drag:0.5}); }
     if(this.move>0.5){ this.dustT-=dt; if(this.dustT<=0){ this.dustT=0.09; emit(this.pos.clone().add(new V3(rand(-.2,.2),0.15,rand(-.2,.2))),{color:0xd6b98a,size:0.45,size1:0.9,op:0.5,life:0.45,vel:new V3(-this.vel.x*0.08,0.4,-this.vel.z*0.08)}); } }
+  }
+  // 目的地までの道（A*）をたどる
+  nextWaypoint(){
+    const ai=this.ai, goal=ai.goal;
+    if(!firstBlock(this.pos,goal,true)){ ai.path=null; return goal; }
+    if(!ai.path||!ai.pathGoal||d2(ai.pathGoal,goal)>2.5||G.t>ai.pathExp){ ai.path=findPath(this.pos,goal); ai.pathGoal=goal.clone(); ai.pathExp=G.t+1.4+Math.random(); ai.pi=0; }
+    if(!ai.path) return routeTo(this.pos,goal);
+    while(ai.pi<ai.path.length-1&&(d2(this.pos,ai.path[ai.pi])<1.3||walkClear(this.pos,ai.path[ai.pi+1]))) ai.pi++;
+    return ai.path[ai.pi];
   }
   think(dt){
     const ai=this.ai, D=this.D||diffParams(7); ai.t-=dt; ai.atkWait-=dt; ai.detourT-=dt; ai.ultWait-=dt;
@@ -2303,7 +2765,13 @@ class Brawler{
       } else {
         let cr=null, crd=1e9; for(const c of G.crates){ if(c.dead||!inZone(c.pos)) continue; const d=d2(c.pos,this.pos); if(d<crd){ crd=d; cr=c; } }
         if(cr && crd<(leader?12:28)){ ai.crate=cr; const to=cr.pos.clone().sub(this.pos).setY(0).normalize(); goal=cr.pos.clone().addScaledVector(to,-Math.min(this.hero.range*0.5,5)); }
-        else goal=intoZone((leader?leader.pos:Z.c).clone().add(new V3(rand(-6,6),0,rand(-6,6))));
+        else if(leader) goal=intoZone(leader.pos.clone().add(new V3(rand(-6,6),0,rand(-6,6))));
+        else {
+          // ぶらぶら歩き：行き先を数秒間たもつ（毎回まん中に向かうと、すぐに全員が集まってしまう）
+          if(!ai.wander||G.t>ai.wanderUntil||d2(this.pos,ai.wander)<2||!inZone(ai.wander)){
+            ai.wander=intoZone(this.pos.clone().lerp(Z.c,0.1).add(new V3(rand(-14,14),0,rand(-14,14)))); ai.wanderUntil=G.t+rand(4,8); }
+          goal=ai.wander;
+        }
       }
       if(goal && !inZone(goal)) goal=intoZone(goal);
       ai.goal=goal; ai.wp=null;
@@ -2325,7 +2793,7 @@ class Brawler{
     }
     if(!ai.goal) return new V3();
     if(d2(this.pos,ai.goal)<0.7) return new V3();
-    ai.wpT=(ai.wpT||0)-dt; if(ai.wpT<=0||!ai.wp){ ai.wpT=0.25; ai.wp=routeTo(this.pos,ai.goal); }
+    ai.wpT=(ai.wpT||0)-dt; if(ai.wpT<=0||!ai.wp){ ai.wpT=0.25; ai.wp=this.nextWaypoint(); }
     const to=ai.wp.clone().sub(this.pos).setY(0);
     if(to.length()<0.4){ ai.wpT=0; return new V3(); }
     if(this.vel.length()<1.2) ai.stuck+=dt; else ai.stuck=0;
@@ -2474,7 +2942,7 @@ function spawnProj(o){
 }
 function endProj(p,impact){
   if(!p.alive) return; p.alive=false; G.scene.remove(p.mesh);
-  if(impact&&pointInWall(p.pos.x,p.pos.z,0.05)){ const back=p.vel.clone().setLength(0.15); for(let k=0;k<12&&pointInWall(p.pos.x,p.pos.z,0.1);k++){ p.pos.sub(back); p.mesh.position.sub(back); } }
+  if(impact&&pointInSolid(p.pos.x,p.pos.z,0.05)){ const back=p.vel.clone().setLength(0.15); for(let k=0;k<12&&pointInSolid(p.pos.x,p.pos.z,0.1);k++){ p.pos.sub(back); p.mesh.position.sub(back); } }
   p.mesh.traverse(o=>{ if(o.isSprite) o.material.dispose(); });
   const at=p.mesh.position.clone();
   if(p.type==='wave'){ burst(at,12,{color:[0xc084fc,0xf5d0fe],speed:5,size:0.35,life:0.4,add:true}); if(impact) streakBurst(at,10,[0xe9d5ff,0xc084fc],8,0.25); }
@@ -2507,7 +2975,7 @@ function updateProjs(dt){
         if(tg){ const want=tg.normalize().multiplyScalar(p.speed); p.vel.lerp(want,Math.min(1,dt*3.2)).setLength(p.speed); p.mesh.rotation.y=Math.atan2(p.vel.x,p.vel.z); } }
       emit(p.mesh.position,{color:pick([0x4ade80,0x22c55e,0x86efac]),size:0.55,size1:0.05,life:0.35,vel:new V3(0,0.8,0),add:true}); }
     else if(p.type==='spore'){ p.mesh.rotation.z+=dt*8; p.mesh.rotation.x+=dt*5; if(Math.random()<0.7) emit(p.mesh.position,{color:pick([0x86efac,0xfef08a,0xf9a8d4]),size:0.25,life:0.5,vel:new V3(rand(-.5,.5),0.3,rand(-.5,.5)),grav:2,drag:0.5}); }
-    const col=pointInWall(p.pos.x,p.pos.z,0.05);
+    const col=pointInSolid(p.pos.x,p.pos.z,0.05);
     if(col){
       if(col.crate){ if(!p.hit.has(col)){ p.hit.add(col); damageCrate(col.crate,p.dmg); endProj(p,true); continue; } }
       else { endProj(p,true); continue; }
@@ -2972,19 +3440,25 @@ function buildSetup(mode,humans){
   // レベル1は全員パワー1、レベル10は全員MAX。そのあいだは少しだけばらつく
   const bl=()=>L<=1?1:L>=DIFF_MAX?MAX_LV:clamp(D.lv+(Math.random()<0.35?pick([-1,1]):0),1,MAX_LV);
   const list=[]; const add=(hero,name,team,lvl,x,z,human)=>list.push({hero,name,team,lvl,x:r2(x),z:r2(z),human});
-  const RX=BOUND_X-3.5, RZ=BOUND_Z-3.5;
+  ensureMap();
+  // マップ全体にちらばるように出現場所をえらぶ（いちばん遠い点を順に取っていく）
+  const spread=n=>{ const cand=[]; for(let i=0;i<700;i++) cand.push(randomFreeSpot()); const out=[pick(cand)];
+    while(out.length<n){ let best=cand[0], bd=-1; for(const c of cand){ let m=1e9; for(const o of out){ const d=d2(c,o); if(d<m) m=d; } if(m>bd){ bd=m; best=c; } } out.push(best); }
+    return out.sort(()=>Math.random()-0.5); };
   if(mode==='trio'){
-    for(let t=0;t<4;t++){ const a=t/4*Math.PI*2+Math.PI/4; const cx=Math.sin(a)*(RX-1.5), cz=Math.cos(a)*(RZ-1.5); const px=Math.cos(a), pz=-Math.sin(a);
-      for(let k=0;k<3;k++){ const off=(k-1)*2.4; const x=cx+px*off, z=cz+pz*off;
+    const T=MATCH_TEAMS, ctr=spread(T);
+    for(let t=0;t<T;t++){ const c=ctr[t];
+      for(let k=0;k<3;k++){ const q=freeNear(c.x+(k-1)*2.4,c.z+(k===1?0:0.6)); const x=q.x, z=q.z;
         if(t===0&&k<humans.length) add(humans[k].hero,humans[k].name,0,humans[k].lvl,x,z,k);
         else add(pick(HERO_IDS),names.pop()||'CPU',t,bl(),x,z,-1); } }
   } else {
-    const n=10, step=Math.floor(n/humans.length); const slots={}; humans.forEach((h,i)=>slots[i*step]=i);
-    for(let i=0;i<n;i++){ const a=i/n*Math.PI*2; const x=Math.sin(a)*RX, z=Math.cos(a)*RZ;
+    const n=MATCH_SIZE, sp=spread(n), step=Math.floor(n/humans.length); const slots={}; humans.forEach((h,i)=>slots[i*step]=i);
+    for(let i=0;i<n;i++){ const x=sp[i].x, z=sp[i].z;
       if(slots[i]!=null){ const h=humans[slots[i]]; add(h.hero,h.name,i,h.lvl,x,z,slots[i]); }
       else add(pick(HERO_IDS),names.pop()||'CPU',i,bl(),x,z,-1); }
   }
-  return {mode,diff:L,zx:r2(rand(-4,4)),zz:r2(rand(-4,4)),list};
+  const zc=randomFreeSpot(Math.random,0,0,24);
+  return {mode,diff:L,zx:r2(zc.x),zz:r2(zc.z),list};
 }
 function ensureRenderer(){
   if(G.renderer) return;
@@ -3010,7 +3484,7 @@ function startMatch(setup,myHuman){
   });
   G.player=G.brawlers.find(b=>b.isPlayer);
   G.t=0; G.shake=0; G.paused=false; G.menuOpen=false; G.slow=1; G.flash=0; G._wasOut=false;
-  G.zone={c:new V3(setup.zx,0,setup.zz),r:45,from:45,phase:0,t:0,shrinking:false,tick:0.5};
+  G.zone={c:new V3(setup.zx,0,setup.zz),r:ZONE_START,from:ZONE_START,phase:0,t:0,shrinking:false,tick:0.5};
   G.camT.copy(G.player.pos);
   INPUT.firing=false; INPUT.ultAim=false; INPUT.keys={}; TA.atk=TA.ult=null; TA.atkDrag=false; resetJoy();
   PL.vx=innerWidth/2; PL.vy=innerHeight*0.4; INPUT.mouse.set(0,0.2);
@@ -3026,8 +3500,9 @@ function startMatch(setup,myHuman){
   $('team-hud').innerHTML=G.mode==='trio'?mates.map(b=>`<div class="tm" data-i="${b.idx}"><img src="${THUMBS[b.hero.id]}"><div>${b.isHuman?'★':''}${esc(b.name)}<div class="b"><i></i></div></div></div>`).join(''):'';
   // VS画面
   const card=(b,sm)=>`<div class="vs-c ${sm?'sm':''} ${b.team!==G.myTeam?'enemy':''}"><img src="${THUMBS[b.hero.id]}"><div class="${b.isPlayer?'me':(b.isHuman?'hu':'')}">${esc(b.name)}</div><small>${b.hero.name} Lv.${b.lvl}</small></div>`;
-  if(G.mode==='trio'){ $('vs-blue').innerHTML=G.brawlers.filter(b=>b.team===G.myTeam).map(b=>card(b,false)).join(''); $('vs-red').innerHTML=G.brawlers.filter(b=>b.team!==G.myTeam).map(b=>card(b,true)).join(''); }
-  else { $('vs-blue').innerHTML=card(G.player,false); $('vs-red').innerHTML=G.brawlers.filter(b=>!b.isPlayer).map(b=>card(b,true)).join(''); }
+  const mini=b=>`<div class="vs-mini ${b.isHuman?'hu':''}"><img src="${THUMBS[b.hero.id]}"></div>`;
+  if(G.mode==='trio'){ $('vs-blue').innerHTML=G.brawlers.filter(b=>b.team===G.myTeam).map(b=>card(b,false)).join(''); const en=G.brawlers.filter(b=>b.team!==G.myTeam); $('vs-red').innerHTML=en.map(b=>mini(b)).join('')+`<div class="vs-cnt">ライバル ${MATCH_TEAMS-1}チーム（${en.length}人）</div>`; }
+  else { $('vs-blue').innerHTML=card(G.player,false); $('vs-red').innerHTML=G.brawlers.filter(b=>!b.isPlayer).map(b=>mini(b)).join('')+`<div class="vs-cnt">ライバル ${G.brawlers.length-1}人</div>`; }
   $('vs').className='overlay on'+(G.mode==='trio'?' trio':'');
   $('vs-mode').innerHTML=(G.mode==='trio'?'<i class="fa-solid fa-users"></i> トリオ・サバイバル ─ チームで生き残れ！':'<i class="fa-solid fa-skull"></i> ソロ・サバイバル ─ 最後の1人をめざせ！')+(NET.mode!=='off'?'　<i class="fa-solid fa-globe"></i> オンライン':'');
   $('vs-mode').innerHTML+=`<div style="margin-top:6px;font-size:13px"><span style="background:${diffColor(G.diff)};padding:3px 12px;border-radius:999px">敵のつよさ Lv.${G.diff} ${DIFF_NAMES[G.diff]}</span></div>`;
@@ -3054,17 +3529,20 @@ function clientEnd(arr){
 }
 function showResult(){
   G.state='result'; $('banner').className='';
-  const p=G.player, r=p.rank||1, trio=G.mode==='trio', top=trio?2:3;
+  const p=G.player, r=p.rank||1, trio=G.mode==='trio', top=3;
   const t=$('res-title'); t.textContent=r===1?'VICTORY':r<=top?`${r}位`:`${r}位`; t.className='res-title '+(r===1?'win':r<=top?'draw':'lose');
   $('res-sub').textContent=G.surrender?`こうさんしました（${r}位）`:(r===1?(trio?'チームで最後まで生き残った！':'最後の1人まで生き残った！'):r<=top?`${r}位でフィニッシュ！`:'おしかった！ 毒ガスと敵に気をつけよう');
   const rk=b=>b.rank||0;
   const list=G.brawlers.slice().sort((a,b)=>(rk(a)||0.5)-(rk(b)||0.5)||a.team-b.team);
   $('res-body').innerHTML=list.map(b=>`<tr class="${b.isPlayer?'me':''} ${b.team===G.myTeam?'ally':''} ${b.dead?'out':''}"><td class="rk">${b.rank?b.rank+'位':'<small>生存</small>'}</td><td><img src="${THUMBS[b.hero.id]}"></td><td class="nmc">${b.rank===1?'<i class="fa-solid fa-crown mvp"></i> ':''}${b.isHuman?'★':''}${esc(b.name)}<br><small style="color:#94a3b8">${b.hero.name}${trio?' ・チーム'+(b.team+1):''}</small></td><td>${b.stats.kills}</td><td>${b.stats.cubes}</td><td>${b.stats.dmg.toLocaleString()}</td></tr>`).join('');
+  { const sc=$('res-scroll'), me=$('res-body').querySelector('tr.me'); sc.scrollTop=0; if(me) setTimeout(()=>{ sc.scrollTop=Math.max(0,me.offsetTop-sc.clientHeight/2); },50); }
   const st=p.stats;
-  const TR=trio?[10,5,0,-3]:[10,8,6,4,2,0,-1,-2,-3,-4], CO=trio?[60,40,25,15]:[60,50,42,35,28,22,18,15,12,10];
+  // 30人・10チーム用の報酬
+  const TR=trio?[12,9,7,5,3,1,0,-1,-2,-3]:[12,10,9,8,7,6,5,5,4,4,3,3,2,2,1,1,0,0,0,-1,-1,-1,-2,-2,-2,-3,-3,-3,-4,-4];
+  const CO=trio?[70,55,45,38,32,27,22,18,15,12]:[70,60,54,50,46,42,38,35,32,30,28,26,24,22,20,19,18,17,16,15,14,13,12,12,11,11,10,10,10,10];
   const RW=diffParams(G.diff||3).reward, tr0=TR[r-1]||0;
   const tr=tr0>0?Math.max(1,Math.round(tr0*RW)):tr0;     // 勝ったときだけレベルで増減（負けのマイナスは同じ）
-  const co=Math.round(((CO[r-1]||10)+st.kills*5+st.cubes*2)*RW), ex=Math.max(10,40-(r-1)*(trio?8:3));
+  const co=Math.round(((CO[r-1]||10)+st.kills*5+st.cubes*2)*RW), ex=Math.max(10,Math.round(40-(r-1)*(trio?3.5:1.2)));
   const firstClear = r===1 && !((save.diffClear>>(G.diff-1))&1);
   const GEM_REW=[3,2,1], ge=GEM_REW[r-1]||0;   // トップ3でジェム：1位3個・2位2個・3位1個
   save.gems+=ge;
@@ -3204,6 +3682,8 @@ function updateCamera(dt){
   const s=G.shake*0.6;
   G.camera.position.set(G.camT.x+rand(-s,s),h+rand(-s,s),G.camT.z+back);
   G.camera.lookAt(G.camT.x,0,G.camT.z-1.5);
+  if(G.sun){ G.sun.position.set(G.camT.x+14,32,G.camT.z+12); G.sun.target.position.set(G.camT.x,0,G.camT.z); G.sun.target.updateMatrixWorld(); }
+  ambientFx(dt);
 }
 function updateAim(){
   const p=G.player, show=G.state==='play'&&p&&!p.dead&&!G.menuOpen&&(!IS_TOUCH||TA.atkDrag||INPUT.ultAim);
@@ -3228,6 +3708,7 @@ function updateAim(){
 function updateHUD(dt){
   for(const b of G.brawlers){
     if(b.dead) continue;
+    const far=!!b._far; if(far!==b._lf){ b._lf=far; b.el.style.display=far?'none':''; } if(far) continue;
     const s=project(b.pos,2.35);
     b.el.style.transform=`translate(${s.x}px,${s.y}px) translate(-50%,-100%)`;
     const hp=Math.ceil(b.hp); if(hp!==b._lh){ b._lh=hp; b.elHp.style.width=(clamp(b.hp/b.maxHp,0,1)*100)+'%'; b.elHpN.textContent=hp; }
@@ -3240,6 +3721,7 @@ function updateHUD(dt){
     t.el.style.transform=`translate(${s.x}px,${s.y}px) translate(-50%,-50%) scale(${sc})`; t.el.style.opacity=t.t>0.6?1-(t.t-0.6)/0.3:1;
   }
   const p=G.player; if(!p) return;
+  updateMinimap(dt);
   $('alive').textContent=G.mode==='trio'?aliveTeams().size:aliveCount(); $('kills').textContent=p.stats.kills;
   const Z=G.zone; if(Z){ const ph=ZONE_PLAN[Z.phase]; const tm=$('timer');
     if(!ph){ tm.innerHTML='<i class="fa-solid fa-skull-crossbones"></i> 最終'; tm.style.color='#86efac'; }
